@@ -1,3 +1,6 @@
+# Testing data
+test_data/
+
 # Gradle
 .gradle/
 build/
