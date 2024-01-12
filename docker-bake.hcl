@@ -28,11 +28,11 @@ function "check_suffix" {
 # ----------------------------------------------------------------------------------------------------------------------
 
 group "prod" {
-  targets = ["NAME-service"]
+  targets = ["gollm-service"]
 }
 
 group "default" {
-  targets = ["NAME-service-base"]
+  targets = ["gollm-service-base"]
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -41,12 +41,12 @@ target "_platforms" {
   platforms = ["linux/amd64", "linux/arm64"]
 }
 
-target "NAME-service-base" {
+target "gollm-service-base" {
   context = "."
-  tags = tag("NAME-service", "", "")
+  tags = tag("gollm-service", "", "")
   dockerfile = "Dockerfile"
 }
 
-target "NAME-service" {
-  inherits = ["_platforms", "NAME-service-base"]
+target "gollm-service" {
+  inherits = ["_platforms", "gollm-service-base"]
 }
