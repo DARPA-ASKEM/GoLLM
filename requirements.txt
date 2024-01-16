@@ -1,5 +1,6 @@
 ## Used for docker image.
-
+fastapi
 openai==1.6.1
 pydantic==2.5.3
 regex
+uvicorn
