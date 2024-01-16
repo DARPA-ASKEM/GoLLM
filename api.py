@@ -11,7 +11,6 @@ class InputModel(BaseModel):
     research_paper: str
     amr: Dict
 
-
 @app.post("/process")
 async def process_input(input_model: InputModel):
     try:
@@ -21,9 +20,9 @@ async def process_input(input_model: InputModel):
 
         # Call the model configuration chain
         response = _model_config_chain(research_paper=research_paper, amr=amr)
-        # test a known url
         response = {"response": response}
         return json.dumps(response)
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
