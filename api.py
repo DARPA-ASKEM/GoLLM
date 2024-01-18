@@ -1,30 +1,38 @@
+from contextlib import contextmanager
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 import json
-from typing import Dict
-from core.openai.tool_utils import _model_config_chain
+from core.openai.tool_utils import _model_config_chain, _model_card_chain
+from core.entities import ConfigureModel, ModelCardModel
 
 app = FastAPI()
 
-class InputModel(BaseModel):
-    ## Use this an input validator.
-    research_paper: str
-    amr: Dict # expects AMR in JSON format
+@contextmanager
+def handle_http_exception():
+    # Handles arbitrary server errors. TODO: add more specific error handling.
+    try:
+        yield
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/configure")
-async def process_input(input_model: InputModel):
-    try:
-        # Convert AMR to JSON string
+async def configure_model(input_model: ConfigureModel):
+    with handle_http_exception():
+        print('Received request to configure model from paper..')
         amr = json.dumps(input_model.amr, separators=(',', ':'))
         research_paper = input_model.research_paper
-
-        # Call the model configuration chain
         response = _model_config_chain(research_paper=research_paper, amr=amr)
         response = {"response": response}
         return json.dumps(response)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.post("/model_card")
+async def model_card(input_model: ModelCardModel):
+    with handle_http_exception():
+        research_paper = input_model.research_paper
+        response = _model_card_chain(research_paper=research_paper)
+        response = {"response": response}
+        return json.dumps(response)
+
 
 if __name__ == "__main__":
     import uvicorn
