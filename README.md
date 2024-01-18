@@ -41,7 +41,12 @@ Once the API has been started, the ```/model_card``` endpoint will consume a JSO
     }
 ```
 <br>
-The API will return a model card in JSON format <br>
+The API will return a model card in JSON format
+<br>
+
+```
+{response: obj}
+```
 
 <b> Note: This is a WIP </b>
 
