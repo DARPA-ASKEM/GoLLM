@@ -14,6 +14,9 @@ def handle_http_exception():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/")
+async def root():
+    return {"message": "GoLLM API is running!"}
 
 @app.post("/configure")
 async def configure_model(input_model: ConfigureModel):
