@@ -1,7 +1,16 @@
 from datetime import datetime
 import inspect
 from pydantic import BaseModel, root_validator
-from typing import List, Callable, Type
+from typing import List, Callable, Type, Dict
+
+
+class ConfigureModel(BaseModel):
+    research_paper: str
+    amr: Dict # expects AMR in JSON format
+
+
+class ModelCardModel(BaseModel):
+    research_paper: str
 
 
 class Message(BaseModel):
