@@ -2,6 +2,8 @@
 from datetime import datetime
 from openai import OpenAI
 from core.entities import Tool
+from core.openai.prompts.petrinet_config import PETRINET_PROMPT
+from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 
 ### This file contains utility functions for the tool. You can use these functions to solve your task. ###
 
@@ -10,12 +12,6 @@ def escape_curly_braces(text: str):
     Escapes curly braces in a string.
     """
     return text.replace('{', '{{').replace('}', '}}')
-
-
-PETRINET_PROMPT = """
-      You are a helpful chatbot designed to find initial parameters for a given petri net model file and a given research paper describing the mathematical model.
-      Use the following petri net json file as a reference: {petrinet}. Ensure that the output follows the above petri net format. Specifically populate parameters and initials. Use the following
-      research paper to answer the user's query: {research_paper}\n\n Answer: {{"""
 
 
 def flim_flam(x: int):
@@ -44,7 +40,7 @@ def ask_a_human(human_instructions: str):
     return input(human_instructions)
 
 
-def _model_config_chain(research_paper: str, amr: str):
+def _model_config_chain(research_paper: str, amr: str) -> str:
     print('Reading model config from research paper: {}'.format(research_paper[:100]))
     prompt = PETRINET_PROMPT.format(petrinet=escape_curly_braces(amr), research_paper=escape_curly_braces(research_paper))
     client = OpenAI()
@@ -54,8 +50,21 @@ def _model_config_chain(research_paper: str, amr: str):
         max_tokens=4000,
         messages=[
         {"role": "user", "content": prompt},])
-    print(output.choices[0].message.content)
-    return output.choices[0].message.content
+
+    return "{" + output.choices[0].message.content
+
+def _model_card_chain(research_paper: str):
+    print('Reading model card from research paper: {}'.format(research_paper[:100]))
+    prompt = INSTRUCTIONS.format(research_paper=escape_curly_braces(research_paper),
+                                 model_card_template=MODEL_CARD_TEMPLATE)
+    client = OpenAI()
+    output = client.chat.completions.create(
+        model="gpt-4-1106-preview",
+        temperature=0.0,
+        max_tokens=4000,
+        messages=[
+        {"role": "user", "content": prompt},])
+    return "{'ModelName'" + output.choices[0].message.content
 
 
 # def read_paper_txt_local(path):
