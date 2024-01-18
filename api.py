@@ -9,9 +9,9 @@ app = FastAPI()
 class InputModel(BaseModel):
     ## Use this an input validator.
     research_paper: str
-    amr: Dict
+    amr: Dict # expects AMR in JSON format
 
-@app.post("/process")
+@app.post("/configure")
 async def process_input(input_model: InputModel):
     try:
         # Convert AMR to JSON string

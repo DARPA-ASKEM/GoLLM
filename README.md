@@ -14,7 +14,7 @@ run: ```docker run -p 8000:8000 -e OPENAI_API_KEY=$OPENAI_API_KEY gollm```
 
 ## AMR configuration from paper 
 
-Once the API has been started, the ```/process``` endpoint will consume a JSON with the structure:<br>
+Once the API has been started, the ```/configure``` endpoint will consume a JSON with the structure:<br>
     ```
     {
     research_paper: str,
