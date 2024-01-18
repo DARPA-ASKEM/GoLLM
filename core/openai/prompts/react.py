@@ -18,6 +18,7 @@ Use the following format:
 Question: the input question you must answer
 Thought: you should always think about what to do, each thought corresponds to a single action and observation.
 Action:
+
 ```
 $JSON_BLOB
 ```
@@ -44,4 +45,4 @@ Action:
 }}
 ```
 Observation: {tool_name} returned {obs}
-""" 
+"""
