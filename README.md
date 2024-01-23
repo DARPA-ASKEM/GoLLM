@@ -50,6 +50,19 @@ The API will return a model card in JSON format
 
 <b> Note: This is a WIP </b>
 
+<hr>
+
+## Running GoLLM task executables.
+
+Start a fresh venv. Cd into GoLLM root, and call `pip install -e .` to install dependencies and build entrypoints for tasks. Run tasks like so:
+
+```
+gollm:model_card --input "{\"research_paper\":\"this is a long research paper, perhaps 20 pages worth of text.\"}"
+```
+
+Task output is written to stdout, followed by a terminating newline. 
+TODO: write dockerfile for running GoLLM tasks as CLI args. 
+
 ## License
 
 [Apache License 2.0](LICENSE)
