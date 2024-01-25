@@ -14,9 +14,6 @@ class TaskRunnerInterface:
         self.input_pipe = args.input_pipe
         self.output_pipe = args.input_pipe
 
-    def my_method(self):
-        print(self.my_attribute)
-
     def read_input(self) -> dict :
         with open(self.input_pipe, 'rb') as f:
             line = f.readline().strip()
