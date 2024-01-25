@@ -22,7 +22,7 @@ class TaskRunnerInterface:
             line = f.readline().strip()
             return json.loads(line.decode())
 
-    def read_input_with_timeout(self, timeout_seconds: int):
+    def read_input_with_timeout(self, timeout_seconds: int = 30):
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(self.read_input)
             try:
@@ -36,7 +36,7 @@ class TaskRunnerInterface:
             f_out.write(bs)
             return
 
-    def write_output_with_timeout(self, output: dict, timeout_seconds: int):
+    def write_output_with_timeout(self, output: dict, timeout_seconds: int = 30):
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(self.write_output, output)
             try:
