@@ -10,7 +10,7 @@ def cleanup():
 
 def main():
     try:
-        taskrunner = TaskRunnerInterface(description='Model Card CLI')
+        taskrunner = TaskRunnerInterface(description='Configure Model CLI')
         taskrunner.on_cancellation(cleanup)
 
         input_dict = taskrunner.read_input_with_timeout()
