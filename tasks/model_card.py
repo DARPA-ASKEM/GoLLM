@@ -1,20 +1,23 @@
-import argparse
-import json
 import sys
 from core.entities import ModelCardModel
 from core.openai.tool_utils import _model_card_chain
-from core.utils import escape_newlines
+from core.taskrunner import TaskRunnerInterface
+
+def cleanup():
+    pass
 
 def main():
-    parser = argparse.ArgumentParser(description='Model Card CLI')
-    parser.add_argument('--input', required=True, type=str, help='JSON string with research_paper field')
-    args = parser.parse_args()
-
     try:
-        input_dict = json.loads(args.input)
+        taskrunner = TaskRunnerInterface(description='Model Card CLI')
+        taskrunner.on_cancellation(cleanup)
+
+        input_dict = taskrunner.read_input_with_timeout()
+
         input_model = ModelCardModel(**input_dict)
-        response = escape_newlines(_model_card_chain(research_paper=input_model.research_paper))
-        print(json.dumps({"response": response}) + '\n')
+        response = _model_card_chain(research_paper=input_model.research_paper)
+
+        taskrunner.write_output_with_timeout({"response": response})
+
     except Exception as e:
         sys.stderr.write(f'Error: {str(e)}\n')
         sys.exit(1)
