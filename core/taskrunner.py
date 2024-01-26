@@ -6,6 +6,7 @@ import argparse
 import os
 import time
 import threading
+from typing import Callable
 from core.utils import escape_newlines
 
 def self_destruct(delay: int):
@@ -20,7 +21,7 @@ class TaskRunnerInterface:
         parser.add_argument('--input', type=str, required=False, help='The name of the input pipe')
         parser.add_argument('--input_pipe', type=str, required=False, help='The name of the input pipe')
         parser.add_argument('--output_pipe', type=str, required=False, help='The name of the output pipe')
-        parser.add_argument('--seld_destruct_timeout_seconds', type=int, default=60*60*24, required=False, help='The name of the output pipe')
+        parser.add_argument('--self_destruct_timeout_seconds', type=int, default=60*60*24, required=False, help='Process self destruct timeout in seconds')
         args = parser.parse_args()
         self.id = args.id
         self.input = args.input
@@ -71,7 +72,7 @@ class TaskRunnerInterface:
             except concurrent.futures.TimeoutError:
                 raise TimeoutError('Writing to output pipe timed out')
 
-    def on_cancellation(self, func : function):
+    def on_cancellation(self, func : Callable):
         def signal_handler(sig, frame):
             func()
             sys.exit(1)
