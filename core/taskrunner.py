@@ -8,9 +8,10 @@ import time
 import threading
 from typing import Callable
 
-def self_destruct(delay: int):
+def self_destruct(self, delay: int):
     # if for whatever reason this process is still around, do our best to self destruct
     time.sleep(delay)
+    self.log(f"Task {self.id} has been running for more than self destruct timeout, self destructing...")
     os.kill(os.getpid(), signal.SIGKILL)  # Send the SIGTERM signal to the current process
 
 class TaskRunnerInterface:
@@ -31,7 +32,7 @@ class TaskRunnerInterface:
             raise ValueError('Either `input` or `input_pipe` must be specified')
 
         # Start the self destruct timer
-        # self.self_destructor = threading.Thread(target=self_destruct, args=(args.self_destruct_timeout_seconds)).start()
+        self.self_destructor = threading.Thread(target=self_destruct, args=(self, args.self_destruct_timeout_seconds,)).start()
 
     def log(self, msg: str):
         print(msg, flush=True)

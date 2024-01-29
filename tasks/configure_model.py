@@ -1,4 +1,3 @@
-import argparse
 import json
 import sys
 from core.entities import ConfigureModel
@@ -15,14 +14,19 @@ def main():
 
         input_dict = taskrunner.read_input_with_timeout()
 
+        taskrunner.log("Creating ConfigureModel from input")
         input_model = ConfigureModel(**input_dict)
         amr = json.dumps(input_model.amr, separators=(',', ':'))
+
+        taskrunner.log("Sending request to OpenAI API")
         response = _model_config_chain(research_paper=input_model.research_paper, amr=amr)
+        taskrunner.log("Received response from OpenAI API")
 
         taskrunner.write_output_with_timeout({"response": response})
 
     except Exception as e:
         sys.stderr.write(f'Error: {str(e)}\n')
+        sys.stderr.flush()
         sys.exit(1)
 
 if __name__ == "__main__":

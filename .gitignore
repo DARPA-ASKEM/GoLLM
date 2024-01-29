@@ -53,6 +53,7 @@ dist
 .sqlite
 experiments-main
 api.env
+GoLLM.egg-info
 
 # Minio
 .minio.sys

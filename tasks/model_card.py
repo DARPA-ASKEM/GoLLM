@@ -24,6 +24,7 @@ def main():
 
     except Exception as e:
         sys.stderr.write(f'Error: {str(e)}\n')
+        sys.stderr.flush()
         sys.exit(1)
 
 if __name__ == "__main__":
