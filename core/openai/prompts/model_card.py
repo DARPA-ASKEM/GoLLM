@@ -25,15 +25,9 @@ MODEL_CARD_TEMPLATE = """
   },
     "terms": []
   },
-  "MoreInformation": {
-    "links": []
-  },
-  "ModelCardAuthors": {
-  },
+  "ModelCardAuthors": [],
   "HowToGetStartedWithTheModel": {
     "examples": ""
-  "TechnicalSpecifications": {
-    "model_specs": ""
   },
   "Citation": {
     "references": []
