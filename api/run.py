@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from fastapi import FastAPI, HTTPException
 import json
-from core.openai.tool_utils import _model_config_chain, _model_card_chain
+from core.openai.tool_utils import model_config_chain, model_card_chain
 from core.entities import ConfigureModel, ModelCardModel
 
 app = FastAPI()
@@ -27,7 +27,7 @@ async def configure_model(input_model: ConfigureModel):
         print("Received request to configure model from paper..")
         amr = json.dumps(input_model.amr, separators=(",", ":"))
         research_paper = input_model.research_paper
-        response = _model_config_chain(research_paper=research_paper, amr=amr)
+        response = model_config_chain(research_paper=research_paper, amr=amr)
         response = {"response": response}
         return json.dumps(response)
 
@@ -36,7 +36,7 @@ async def configure_model(input_model: ConfigureModel):
 async def model_card(input_model: ModelCardModel):
     with handle_http_exception():
         research_paper = input_model.research_paper
-        response = _model_card_chain(research_paper=research_paper)
+        response = model_card_chain(research_paper=research_paper)
         response = {"response": response}
         return json.dumps(response)
 
