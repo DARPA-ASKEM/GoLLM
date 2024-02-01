@@ -1,2 +1,2 @@
 def escape_newlines(text: str):
-    return text.replace('\n', '\\n')
+    return text.replace("\n", "\\n")

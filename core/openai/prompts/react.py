@@ -36,7 +36,7 @@ Final Answer: the final answer to the original input question.
 """
 SYSTEM_MESSAGE_SUFFIX = """Begin! Reminder to always use the exact characters `Final Answer` if you are certain of the final answer. You may prompt the user for help multiple times, only if you are completely unsure of the answer."""
 HUMAN_MESSAGE = "{input}\n\n{scratchpad}"
-ACT_OBS ="""
+ACT_OBS = """
 Action:
 ```
 {{

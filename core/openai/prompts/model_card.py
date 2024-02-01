@@ -1,4 +1,3 @@
-
 MODEL_CARD_TEMPLATE = """
 {
   "ModelName": {
