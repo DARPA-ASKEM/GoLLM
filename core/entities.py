@@ -8,10 +8,20 @@ class ConfigureModel(BaseModel):
     research_paper: str
     amr: Dict # expects AMR in JSON format
 
-
 class ModelCardModel(BaseModel):
     research_paper: str
 
+
+class EmbeddingModel(BaseModel):
+    text: str
+    embedding_model: str
+
+    @root_validator(pre=False, skip_on_failure=True)
+    def check_embedding_model(cls, values):
+        embedding_model = values.get('embedding_model')
+        if embedding_model != 'text-embedding-ada-002':
+            raise ValueError('Invalid embedding model, must be "text-embedding-ada-002"')
+        return values
 
 class Message(BaseModel):
     message_type: str
@@ -64,14 +74,14 @@ class ChatSession:
         return self.conversation_history
 
 
-class Tool: 
+class Tool:
     def __init__(self, name: str, args: List, description: str, func: Callable, input_type: Type):
         self.name = name
         self.args = args
         self.description = description
         self.func = func
         self.input_type = input_type
-    
+
     def __call__(self, *args, **kwargs):
         return self.func(*args, **kwargs)
 
@@ -89,7 +99,7 @@ class Toolset:
         """
         Returns a string of tool names.
         """
-        return '\n'.join(self.TOOLS.keys()) 
+        return '\n'.join(self.TOOLS.keys())
 
     def get_tool_code(self):
         """
