@@ -6,7 +6,8 @@ from typing import List, Callable, Type, Dict
 
 class ConfigureModel(BaseModel):
     research_paper: str
-    amr: Dict # expects AMR in JSON format
+    amr: Dict  # expects AMR in JSON format
+
 
 class ModelCardModel(BaseModel):
     research_paper: str
@@ -18,10 +19,13 @@ class EmbeddingModel(BaseModel):
 
     @root_validator(pre=False, skip_on_failure=True)
     def check_embedding_model(cls, values):
-        embedding_model = values.get('embedding_model')
-        if embedding_model != 'text-embedding-ada-002':
-            raise ValueError('Invalid embedding model, must be "text-embedding-ada-002"')
+        embedding_model = values.get("embedding_model")
+        if embedding_model != "text-embedding-ada-002":
+            raise ValueError(
+                'Invalid embedding model, must be "text-embedding-ada-002"'
+            )
         return values
+
 
 class Message(BaseModel):
     message_type: str
@@ -29,21 +33,20 @@ class Message(BaseModel):
     message_id: int = None
     timestamp: datetime = None
 
-
     @root_validator(pre=True)
     def set_timestamp_id(cls, values):
-        timestamp = values.get('timestamp')
+        timestamp = values.get("timestamp")
         if timestamp:
-            values['timestamp'] = datetime.fromtimestamp(timestamp)
+            values["timestamp"] = datetime.fromtimestamp(timestamp)
         else:
-            values['timestamp'] = datetime.now()
+            values["timestamp"] = datetime.now()
         return values
 
     @root_validator(pre=True)
     def set_message_id(cls, values):
-        timestamp = values.get('timestamp')
+        timestamp = values.get("timestamp")
         if timestamp:
-            values['message_id'] = int(timestamp.timestamp())
+            values["message_id"] = int(timestamp.timestamp())
         return values
 
 
@@ -75,7 +78,9 @@ class ChatSession:
 
 
 class Tool:
-    def __init__(self, name: str, args: List, description: str, func: Callable, input_type: Type):
+    def __init__(
+        self, name: str, args: List, description: str, func: Callable, input_type: Type
+    ):
         self.name = name
         self.args = args
         self.description = description
@@ -90,6 +95,7 @@ class Toolset:
     """
     A class for testing the toolset.
     """
+
     TOOLS = {}
 
     def __init__(self, tools: List[Tool]):
@@ -99,13 +105,13 @@ class Toolset:
         """
         Returns a string of tool names.
         """
-        return '\n'.join(self.TOOLS.keys())
+        return "\n".join(self.TOOLS.keys())
 
     def get_tool_code(self):
         """
         Returns a string of tool arguments. Used for zero shot ReAct
         """
-        return '\n'.join([inspect.getsource(tool.func) for tool in self.TOOLS.values()])
+        return "\n".join([inspect.getsource(tool.func) for tool in self.TOOLS.values()])
 
     def get_tool(self, tool_name: str):
         return self.TOOLS[tool_name]

@@ -13,7 +13,7 @@ setup(
         "console_scripts": [
             "gollm:configure_model=tasks.configure_model:main",
             "gollm:model_card=tasks.model_card:main",
-            "gollm:embedding=tasks.embedding:main"
+            "gollm:embedding=tasks.embedding:main",
         ],
     },
     python_requires=">=3.8",
