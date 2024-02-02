@@ -10,6 +10,7 @@ def cleanup():
 
 
 def main():
+    exitCode = 0
     try:
         taskrunner = TaskRunnerInterface(description="Configure Model CLI")
         taskrunner.on_cancellation(cleanup)
@@ -31,7 +32,11 @@ def main():
     except Exception as e:
         sys.stderr.write(f"Error: {str(e)}\n")
         sys.stderr.flush()
-        sys.exit(1)
+        exitCode = 1
+
+    taskrunner.log("Shutting down")
+    taskrunner.shutdown()
+    sys.exit(exitCode)
 
 
 if __name__ == "__main__":
