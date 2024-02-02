@@ -8,13 +8,38 @@ import time
 import threading
 from typing import Callable
 
+class SelfDestructThread(threading.Thread):
+    def __init__(self, self_destruct_timeout_seconds: int):
+        super().__init__()
+        self.stop_requested = False
+        self.self_destruct_timeout_seconds = self_destruct_timeout_seconds
 
-def self_destruct(self, delay: int):
+    def run(self):
+        interval_seconds = 5
+        start_time = time.time()
+        while not self.stop_requested:
+            time.sleep(interval_seconds)
+            if (time.time() - start_time) > self.self_destruct_timeout_seconds:
+                self.log(f"Task {self.id} has been running for more than self destruct timeout, self destructing...")
+                os.kill(os.getpid(), signal.SIGKILL)
+
+    def stop(self):
+        self.stop_requested = True
+
+def self_destruct(self, shutdown: bool, delay: int):
+    interval_seconds = 5
+    start_time = time.time()
+    while (shutdown):
+        time.sleep(interval_seconds)
+        self.log(
+            f"Task {self.id} has been running for more than self destruct timeout, self destructing..."
+        )
+        if time.time() - start_time > delay:
+            os.kill(
+                os.getpid(), signal.SIGKILL
+            )
     # if for whatever reason this process is still around, do our best to self destruct
     time.sleep(delay)
-    self.log(
-        f"Task {self.id} has been running for more than self destruct timeout, self destructing..."
-    )
     os.kill(
         os.getpid(), signal.SIGKILL
     )  # Send the SIGTERM signal to the current process
@@ -55,16 +80,14 @@ class TaskRunnerInterface:
             raise ValueError("Either `input` or `input_pipe` must be specified")
 
         # Start the self destruct timer
-        self.self_destructor = threading.Thread(
-            target=self_destruct,
-            args=(
-                self,
-                args.self_destruct_timeout_seconds,
-            ),
-        ).start()
+        self.self_destructor = SelfDestructThread(args.self_destruct_timeout_seconds)
+        self.self_destructor.start()
 
     def log(self, msg: str):
         print(msg, flush=True)
+
+    def shutdown(self):
+        self.self_destructor.stop()
 
     def read_input_with_timeout(self, timeout_seconds: int = 30):
         def read_input() -> dict:
