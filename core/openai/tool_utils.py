@@ -1,5 +1,6 @@
 from datetime import datetime
 from openai import OpenAI
+from typing import List
 from core.entities import Tool
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
@@ -58,10 +59,11 @@ def model_card_chain(research_paper: str):
     return "{'ModelName'" + output.choices[0].message.content
 
 
-def embedding_chain(text: str) -> str:
+def embedding_chain(text: str) -> List:
     print("Creating embeddings for text: {}".format(text[:100]))
     client = OpenAI()
     output = client.embeddings.create(model="text-embedding-ada-002", input=text)
+    print(type(output.data[0].embedding))
     return output.data[0].embedding
 
 
