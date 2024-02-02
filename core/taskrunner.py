@@ -8,6 +8,7 @@ import time
 import threading
 from typing import Callable
 
+
 class SelfDestructThread(threading.Thread):
     def __init__(self, self_destruct_timeout_seconds: int):
         super().__init__()
@@ -20,29 +21,13 @@ class SelfDestructThread(threading.Thread):
         while not self.stop_requested:
             time.sleep(interval_seconds)
             if (time.time() - start_time) > self.self_destruct_timeout_seconds:
-                self.log(f"Task {self.id} has been running for more than self destruct timeout, self destructing...")
-                os.kill(os.getpid(), signal.SIGKILL)
+                # if for whatever reason this process is still around, do our best to self destruct
+                os.kill(
+                    os.getpid(), signal.SIGKILL
+                )  # Send the SIGTERM signal to the current process
 
     def stop(self):
         self.stop_requested = True
-
-def self_destruct(self, shutdown: bool, delay: int):
-    interval_seconds = 5
-    start_time = time.time()
-    while (shutdown):
-        time.sleep(interval_seconds)
-        self.log(
-            f"Task {self.id} has been running for more than self destruct timeout, self destructing..."
-        )
-        if time.time() - start_time > delay:
-            os.kill(
-                os.getpid(), signal.SIGKILL
-            )
-    # if for whatever reason this process is still around, do our best to self destruct
-    time.sleep(delay)
-    os.kill(
-        os.getpid(), signal.SIGKILL
-    )  # Send the SIGTERM signal to the current process
 
 
 class TaskRunnerInterface:
