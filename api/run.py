@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from fastapi import FastAPI, HTTPException
 import json
-from core.openai.tool_utils import model_config_chain, model_card_chain
+from core.openai.tool_utils import model_config_chain, amodel_card_chain
 from core.entities import ConfigureModel, ModelCardModel
 
 app = FastAPI()
@@ -34,12 +34,13 @@ async def configure_model(input_model: ConfigureModel):
 
 @app.post("/model_card")
 async def model_card(input_model: ModelCardModel):
-    with handle_http_exception():
+    try:
         research_paper = input_model.research_paper
-        response = model_card_chain(research_paper=research_paper)
+        response = await amodel_card_chain(research_paper=research_paper)  # Use await here
         response = {"response": response}
-        return json.dumps(response)
-
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

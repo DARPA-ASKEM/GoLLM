@@ -1,7 +1,8 @@
 from datetime import datetime
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.entities import Tool
+from core.utils import remove_references
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 
@@ -24,6 +25,7 @@ def ask_a_human(human_instructions: str):
 
 def model_config_chain(research_paper: str, amr: str) -> str:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
+    research_paper = remove_references(research_paper)
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper),
@@ -37,7 +39,6 @@ def model_config_chain(research_paper: str, amr: str) -> str:
             {"role": "user", "content": prompt},
         ],
     )
-
     return "{" + output.choices[0].message.content
 
 
@@ -57,6 +58,31 @@ def model_card_chain(research_paper: str):
         ],
     )
     return "{'ModelName'" + output.choices[0].message.content
+
+
+async def amodel_card_chain(research_paper: str):
+    """Async, meant to be run via API for batch jobs run offline."""
+    print("Reading model card from research paper: {}".format(research_paper[:100]))
+    research_paper = remove_references(research_paper)
+    prompt = INSTRUCTIONS.format(
+        research_paper=escape_curly_braces(research_paper),
+        model_card_template=MODEL_CARD_TEMPLATE,
+    )
+
+    client = AsyncOpenAI()
+
+    messages = [{"role": "user", "content": prompt}]
+    functions = None
+
+    response = await client.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages=messages,
+        tools=functions,
+        temperature=0.0,
+        tool_choice=None
+    )
+
+    return "{'ModelName'" + response.choices[0].message.content
 
 
 def embedding_chain(text: str) -> List:
