@@ -1,7 +1,6 @@
 MODEL_CARD_TEMPLATE = """
 {
   "ModelName": {
-    "model_id": "Unique identifier for the Petri net model.",
     "model_summary": "A brief description of the system or process."
   },
   "ModelDetails": {
@@ -42,6 +41,5 @@ INSTRUCTIONS = """
 You are a helpful agent designed to populate a model card containing metadata about a given research paper and its associated model.\n
 Use the following research paper as a reference: ---PAPER START---{research_paper}---PAPER END--. Ensure that the output follows the below model card format.\n
 TEMPLATE: {model_card_template}\n
-BEGIN!\n{{"ModelName":
-
+Make sure that the following text can be serialized as a JSON object:\n{{
 """

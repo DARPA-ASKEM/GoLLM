@@ -2,7 +2,7 @@ from datetime import datetime
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.entities import Tool
-from core.utils import remove_references
+from core.utils import remove_references, extract_json
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 
@@ -57,7 +57,10 @@ def model_card_chain(research_paper: str):
             {"role": "user", "content": prompt},
         ],
     )
-    return "{'ModelName'" + output.choices[0].message.content
+    model_card = extract_json("{" + output.choices[0].message.content)
+    if model_card is None:
+        return MODEL_CARD_TEMPLATE
+    return model_card
 
 
 async def amodel_card_chain(research_paper: str):
@@ -70,10 +73,8 @@ async def amodel_card_chain(research_paper: str):
     )
 
     client = AsyncOpenAI()
-
     messages = [{"role": "user", "content": prompt}]
     functions = None
-
     response = await client.chat.completions.create(
         model="gpt-4-1106-preview",
         messages=messages,
@@ -81,8 +82,10 @@ async def amodel_card_chain(research_paper: str):
         temperature=0.0,
         tool_choice=None
     )
-
-    return "{'ModelName'" + response.choices[0].message.content
+    model_card = extract_json("{" + response.choices[0].message.content)
+    if model_card is None:
+        return MODEL_CARD_TEMPLATE
+    return model_card
 
 
 def embedding_chain(text: str) -> List:
