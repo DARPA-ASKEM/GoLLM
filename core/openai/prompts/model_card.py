@@ -41,5 +41,6 @@ INSTRUCTIONS = """
 You are a helpful agent designed to populate a model card containing metadata about a given research paper and its associated model.\n
 Use the following research paper as a reference: ---PAPER START---{research_paper}---PAPER END--. Ensure that the output follows the below model card format.\n
 TEMPLATE: {model_card_template}\n
-Make sure that the following text can be serialized as a JSON object:\n{{
-"""
+Make sure that the following text can be serialized as a JSON object:\n
+```json
+{{"""
