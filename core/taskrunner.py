@@ -9,6 +9,9 @@ import threading
 from typing import Callable
 
 
+READ_CHUNK_SIZE = 1024*1024
+
+
 class SelfDestructThread(threading.Thread):
     def __init__(self, self_destruct_timeout_seconds: int):
         super().__init__()
@@ -77,14 +80,14 @@ class TaskRunnerInterface:
     def read_input_with_timeout(self, timeout_seconds: int = 30):
         def read_input() -> dict:
             self.log("Reading input from input pipe")
-            line = b""
+            chunks = []
             with open(self.input_pipe, "rb") as f:
                 while True:
-                    chunk = f.read(1024)
+                    chunk = f.read(READ_CHUNK_SIZE)
                     if chunk == b"":
                         break
-                    line += chunk
-            return json.loads(line.decode("utf-8"))
+                    chunks.append(chunk)
+            return json.loads(b"".join(chunks).decode("utf-8"))
 
         if self.input is not None:
             self.log("Reading input from input argument")
