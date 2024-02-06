@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.entities import Tool
@@ -59,7 +60,7 @@ def model_card_chain(research_paper: str):
     )
     model_card = extract_json("{" + output.choices[0].message.content)
     if model_card is None:
-        return MODEL_CARD_TEMPLATE
+        return json.loads(MODEL_CARD_TEMPLATE)
     return model_card
 
 
@@ -84,7 +85,7 @@ async def amodel_card_chain(research_paper: str):
     )
     model_card = extract_json("{" + response.choices[0].message.content)
     if model_card is None:
-        return MODEL_CARD_TEMPLATE
+        return json.loads(MODEL_CARD_TEMPLATE)
     return model_card
 
 

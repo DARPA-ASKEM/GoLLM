@@ -21,6 +21,7 @@ MODEL_CARD_TEMPLATE = """
   "TechnicalSpecifications": {
     "model_specs": "Details about the model's complexity, such as the number of places, transitions, parameter count, and arcs."
   },
+  "Glossary": {
     "terms": []
   },
   "ModelCardAuthors": [],
@@ -30,13 +31,12 @@ MODEL_CARD_TEMPLATE = """
   "Citation": {
     "references": []
   },
-  "Glossary": {
-    "terms": []
-  },
   "MoreInformation": {
     "links": []
+  }
 }
 """
+
 INSTRUCTIONS = """
 You are a helpful agent designed to populate a model card containing metadata about a given research paper and its associated model.\n
 Use the following research paper as a reference: ---PAPER START---{research_paper}---PAPER END--. Ensure that the output follows the below model card format.\n
