@@ -3,7 +3,7 @@ import json
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.entities import Tool
-from core.utils import remove_references, extract_json
+from core.utils import remove_references, extract_json, normalize_greek_alphabet
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 
@@ -27,6 +27,7 @@ def ask_a_human(human_instructions: str):
 def model_config_chain(research_paper: str, amr: str) -> str:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
     research_paper = remove_references(research_paper)
+    research_paper = normalize_greek_alphabet(research_paper)
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper),
@@ -34,13 +35,13 @@ def model_config_chain(research_paper: str, amr: str) -> str:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4-1106-preview",
-        temperature=0.0,
+        top_p=0,
         max_tokens=4000,
         messages=[
             {"role": "user", "content": prompt},
         ],
     )
-    return "{" + output.choices[0].message.content
+    return extract_json("{" + output.choices[0].message.content)
 
 
 def model_card_chain(research_paper: str):
@@ -52,7 +53,7 @@ def model_card_chain(research_paper: str):
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4-1106-preview",
-        temperature=0.0,
+        top_p=0,
         max_tokens=4000,
         messages=[
             {"role": "user", "content": prompt},
