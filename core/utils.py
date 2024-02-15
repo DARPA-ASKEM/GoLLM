@@ -30,3 +30,20 @@ def extract_json(text: str):
     except Exception as e:
         print(f"An error occurred while parsing JSON: {e}")
         return None
+
+def normalize_greek_alphabet(text: str):
+    greek_to_english = {
+        'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'ε': 'epsilon',
+        'ζ': 'zeta', 'η': 'eta', 'θ': 'theta', 'ι': 'iota', 'κ': 'kappa',
+        'λ': 'lambda', 'μ': 'mu', 'ν': 'nu', 'ξ': 'xi', 'ο': 'omicron',
+        'π': 'pi', 'ρ': 'rho', 'σ': 'sigma', 'τ': 'tau', 'υ': 'upsilon',
+        'φ': 'phi', 'χ': 'chi', 'ψ': 'psi', 'ω': 'omega'
+    }
+
+    normalized_text = ""
+    for char in text:
+        if char.lower() in greek_to_english:
+            normalized_text += greek_to_english[char.lower()]
+        else:
+            normalized_text += char
+    return normalized_text
