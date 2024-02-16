@@ -54,3 +54,19 @@ def exceeds_tokens(prompt: str, max_tokens: int) -> bool:
 	if len(enc.encode(prompt)) > max_tokens:
 		return True
 	return False
+
+def model_config_adapter(model_config: dict) -> dict:
+
+	"""
+	Adapter function which converts the model config dict to HMI expected format.
+	"""
+
+	output_json = {'conditions': []}
+
+	for condition_name, description in model_config['conditions'].items():
+		condition_data = {'name': condition_name, 'description': description, 'parameters': []}
+		for param_data in model_config['parameters']:
+			param_value = param_data['value'].get(condition_name)
+			condition_data['parameters'].append({'id': param_data['id'], 'value': param_value})
+		output_json['conditions'].append(condition_data)
+	return output_json

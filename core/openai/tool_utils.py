@@ -3,7 +3,7 @@ import json
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.entities import Tool
-from core.utils import remove_references, extract_json, normalize_greek_alphabet, exceeds_tokens
+from core.utils import remove_references, extract_json, normalize_greek_alphabet, exceeds_tokens, model_config_adapter
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
@@ -25,7 +25,7 @@ def ask_a_human(human_instructions: str):
 	return input(human_instructions)
 
 
-def model_config_chain(research_paper: str, amr: str) -> str:
+def model_config_chain(research_paper: str, amr: str) -> dict:
 	print("Reading model config from research paper: {}".format(research_paper[:100]))
 	research_paper = remove_references(research_paper)
 	research_paper = normalize_greek_alphabet(research_paper)
@@ -42,10 +42,11 @@ def model_config_chain(research_paper: str, amr: str) -> str:
 			{"role": "user", "content": prompt},
 		],
 	)
-	return extract_json("{" + output.choices[0].message.content)
+	config = extract_json("{" + output.choices[0].message.content)
+	return model_config_adapter(config)
 
 
-def model_card_chain(research_paper: str):
+def model_card_chain(research_paper: str) -> dict:
 	print("Reading model card from research paper: {}".format(research_paper[:100]))
 	prompt = INSTRUCTIONS.format(
 		research_paper=escape_curly_braces(research_paper),
