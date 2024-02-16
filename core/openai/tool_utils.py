@@ -3,7 +3,7 @@ import json
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.entities import Tool
-from core.utils import remove_references, extract_json, normalize_greek_alphabet
+from core.utils import remove_references, extract_json, normalize_greek_alphabet, exceeds_tokens
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
@@ -68,6 +68,8 @@ def model_card_chain(research_paper: str):
 def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> str:
 	print("Condensing chunks for query: {}".format(query[:100]))
 	prompt = CONDENSE_PROMPT.format(query=query, chunks=format_chunks(chunks))
+	if exceeds_tokens(prompt, max_tokens):
+		raise ValueError("Prompt exceeds max tokens. Reduce number of chunks by reducing K in KNN search.")
 	client = OpenAI()
 	output = client.chat.completions.create(
 		model="gpt-3.5-turbo-0125",
