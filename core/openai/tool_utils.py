@@ -112,7 +112,6 @@ def embedding_chain(text: str) -> List:
 	print("Creating embeddings for text: {}".format(text[:100]))
 	client = OpenAI()
 	output = client.embeddings.create(model="text-embedding-ada-002", input=text)
-	print(type(output.data[0].embedding))
 	return output.data[0].embedding
 
 
