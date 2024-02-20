@@ -3,8 +3,6 @@ PETRINET_PROMPT = """
       Use the following petri net json file as a reference: {petrinet}.
       Assume that parameter fields with missing values may have multiple different sets values discussed in the research paper for different conditions.\n
       Return the different sets of initial parameters for the petri net model file like so:
-      ```
-      json
 	  {{"conditions": {{"condition_1": "description of condition_1", "condition_2": "description of condition_2", ...}},
 	  "parameters": [{{
       "id": "beta",
@@ -18,6 +16,5 @@ PETRINET_PROMPT = """
       Only use parameters found in the reference petrinet file provided above.
       Ensure that the output follows the above petri net format and can be serialized as a JSON. Specifically populate parameters and initials. Use the following
       research paper to answer the user's query: {research_paper}\n\n Answer:
-      ```json
          {{
 """

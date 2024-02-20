@@ -16,21 +16,14 @@ def remove_references(text: str) -> str:
 	return new_text.strip()
 
 
-def extract_json(text: str):
-	try:
-		matches = re.findall(r'\{.*\}', text, re.DOTALL)
-
-		if matches:
-			for match in matches:
-				try:
-					json_obj = json.loads(match)
-					return json_obj
-				except json.JSONDecodeError:
-					continue
-		return None
-	except Exception as e:
-		print(f"An error occurred while parsing JSON: {e}")
-		return None
+def extract_json(text: str) -> dict:
+    corrected_text = text.replace('{{', '{').replace('}}', '}')
+    print(corrected_text)
+    try:
+        json_obj = json.loads(corrected_text)
+        return json_obj
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Error decoding JSON: {e}\nfrom text {text}")
 
 def normalize_greek_alphabet(text: str) -> str:
 	greek_to_english = {
@@ -62,7 +55,7 @@ def model_config_adapter(model_config: dict) -> dict:
 	"""
 
 	output_json = {'conditions': []}
-
+	print(model_config)
 	for condition_name, description in model_config['conditions'].items():
 		condition_data = {'name': condition_name, 'description': description, 'parameters': []}
 		for param_data in model_config['parameters']:
