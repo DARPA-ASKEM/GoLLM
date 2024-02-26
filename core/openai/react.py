@@ -14,7 +14,7 @@ from core.entities import Message
 
 
 class OpenAIAgent:
-    def __init__(self, api_key, toolset, conversation_history=None):
+    def __init__(self, toolset, api_key=None, conversation_history=None):
         self.model = OpenAI(api_key=api_key)
 
         self.toolset = toolset
@@ -42,6 +42,7 @@ class OpenAIAgent:
         output = self.model.chat.completions.create(
             model="gpt-4-1106-preview",
             temperature=0.0,
+            top_p=0,
             messages=[
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": human_prompt},
@@ -57,7 +58,7 @@ class ScratchpadParser:
     thought_pattern = r"Thought:(.*?)(?=Action:|Observation:|$)"
     action_pattern = r"Action:\n```\n({.*?})\n```\n"
     observation_pattern = r"Observation:(.*?)(?=Thought:|Action:|$)"
-    action_blob_pattern = r"(?<=```(?:json\n)?)\s*(.*?)\s*(?=```)"
+    action_blob_pattern = r"(?<=```json\n)\s*(.*?)\s*(?=```)"
     final_answer_pattern = r".*Final Answer: (.*)"
 
     @staticmethod
