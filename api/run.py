@@ -36,11 +36,14 @@ async def configure_model(input_model: ConfigureModel):
 async def model_card(input_model: ModelCardModel):
     try:
         research_paper = input_model.research_paper
-        response = await amodel_card_chain(research_paper=research_paper)  # Use await here
+        response = await amodel_card_chain(
+            research_paper=research_paper
+        )  # Use await here
         response = {"response": response}
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn

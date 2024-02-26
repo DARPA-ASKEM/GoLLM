@@ -9,7 +9,7 @@ import threading
 from typing import Callable
 
 
-READ_CHUNK_SIZE = 1024*1024
+READ_CHUNK_SIZE = 1024 * 1024
 
 
 class SelfDestructThread(threading.Thread):
