@@ -1,142 +1,179 @@
 from datetime import datetime
 import json
 from openai import OpenAI, AsyncOpenAI
+import os
 import pandas as pd
+import requests
 from typing import List
-from core.entities import Tool
 from core.utils import (
-    remove_references,
-    extract_json,
-    normalize_greek_alphabet,
-    exceeds_tokens,
-    model_config_adapter,
+	remove_references,
+	extract_json,
+	normalize_greek_alphabet,
+	exceeds_tokens,
+	model_config_adapter,
 )
+from core.openai.toolsets import DatasetConfig
+from core.openai.prompts.dataset_config import DATASET_PROMPT
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
+from core.openai.react import ReActManager, OpenAIAgent, AgentExecutor
+from core.openai.toolsets import DatasetConfig
 
 
 def escape_curly_braces(text: str):
-    """
-    Escapes curly braces in a string.
-    """
-    return text.replace("{", "{{").replace("}", "}}")
+	"""
+	Escapes curly braces in a string.
+	"""
+	return text.replace("{", "{{").replace("}", "}}")
 
 
 def model_config_chain(research_paper: str, amr: str) -> dict:
-    print("Reading model config from research paper: {}".format(research_paper[:100]))
-    research_paper = remove_references(research_paper)
-    research_paper = normalize_greek_alphabet(research_paper)
-    prompt = PETRINET_PROMPT.format(
-        petrinet=escape_curly_braces(amr),
-        research_paper=escape_curly_braces(research_paper),
-    )
-    client = OpenAI()
-    output = client.chat.completions.create(
-        model="gpt-4-0125-preview",
-        top_p=0,
-        max_tokens=4000,
-        messages=[
-            {"role": "user", "content": prompt},
-        ],
-    )
-    config = extract_json("{" + output.choices[0].message.content)
-    return model_config_adapter(config)
+	print("Reading model config from research paper: {}".format(research_paper[:100]))
+	research_paper = remove_references(research_paper)
+	research_paper = normalize_greek_alphabet(research_paper)
+	prompt = PETRINET_PROMPT.format(
+		petrinet=escape_curly_braces(amr),
+		research_paper=escape_curly_braces(research_paper),
+	)
+	client = OpenAI()
+	output = client.chat.completions.create(
+		model="gpt-4-0125-preview",
+		top_p=0,
+		max_tokens=4000,
+		messages=[
+			{"role": "user", "content": prompt},
+		],
+	)
+	config = extract_json("{" + output.choices[0].message.content)
+	return model_config_adapter(config)
 
 
 def model_card_chain(research_paper: str) -> dict:
-    print("Reading model card from research paper: {}".format(research_paper[:100]))
-    prompt = INSTRUCTIONS.format(
-        research_paper=escape_curly_braces(research_paper),
-        model_card_template=MODEL_CARD_TEMPLATE,
-    )
-    client = OpenAI()
-    output = client.chat.completions.create(
-        model="gpt-4-0125-preview",
-        top_p=0,
-        max_tokens=4000,
-        messages=[
-            {"role": "user", "content": prompt},
-        ],
-    )
-    model_card = extract_json("{" + output.choices[0].message.content)
-    if model_card is None:
-        return json.loads(MODEL_CARD_TEMPLATE)
-    return model_card
+	print("Reading model card from research paper: {}".format(research_paper[:100]))
+	prompt = INSTRUCTIONS.format(
+		research_paper=escape_curly_braces(research_paper),
+		model_card_template=MODEL_CARD_TEMPLATE,
+	)
+	client = OpenAI()
+	output = client.chat.completions.create(
+		model="gpt-4-0125-preview",
+		top_p=0,
+		max_tokens=4000,
+		messages=[
+			{"role": "user", "content": prompt},
+		],
+	)
+	model_card = extract_json("{" + output.choices[0].message.content)
+	if model_card is None:
+		return json.loads(MODEL_CARD_TEMPLATE)
+	return model_card
 
 
 def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> str:
-    print("Condensing chunks for query: {}".format(query[:100]))
-    prompt = CONDENSE_PROMPT.format(query=query, chunks=format_chunks(chunks))
-    if exceeds_tokens(prompt, max_tokens):
-        raise ValueError(
-            "Prompt exceeds max tokens. Reduce number of chunks by reducing K in KNN search."
-        )
-    client = OpenAI()
-    output = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
-        top_p=0,
-        max_tokens=1024,
-        messages=[
-            {"role": "user", "content": prompt},
-        ],
-    )
-    return output.choices[0].message.content
+	print("Condensing chunks for query: {}".format(query[:100]))
+	prompt = CONDENSE_PROMPT.format(query=query, chunks=format_chunks(chunks))
+	if exceeds_tokens(prompt, max_tokens):
+		raise ValueError(
+			"Prompt exceeds max tokens. Reduce number of chunks by reducing K in KNN search."
+		)
+	client = OpenAI()
+	output = client.chat.completions.create(
+		model="gpt-3.5-turbo-0125",
+		top_p=0,
+		max_tokens=1024,
+		messages=[
+			{"role": "user", "content": prompt},
+		],
+	)
+	return output.choices[0].message.content
 
 
 async def amodel_card_chain(research_paper: str):
-    """Async, meant to be run via API for batch jobs run offline."""
-    print("Reading model card from research paper: {}".format(research_paper[:100]))
-    research_paper = remove_references(research_paper)
-    prompt = INSTRUCTIONS.format(
-        research_paper=escape_curly_braces(research_paper),
-        model_card_template=MODEL_CARD_TEMPLATE,
-    )
+	"""Async, meant to be run via API for batch jobs run offline."""
+	print("Reading model card from research paper: {}".format(research_paper[:100]))
+	research_paper = remove_references(research_paper)
+	prompt = INSTRUCTIONS.format(
+		research_paper=escape_curly_braces(research_paper),
+		model_card_template=MODEL_CARD_TEMPLATE,
+	)
 
-    client = AsyncOpenAI()
-    messages = [{"role": "user", "content": prompt}]
-    functions = None
-    response = await client.chat.completions.create(
-        model="gpt-4-1106-preview",
-        messages=messages,
-        tools=functions,
-        temperature=0.0,
-        tool_choice=None,
-    )
-    model_card = extract_json("{" + response.choices[0].message.content)
-    if model_card is None:
-        return json.loads(MODEL_CARD_TEMPLATE)
-    return model_card
+	client = AsyncOpenAI()
+	messages = [{"role": "user", "content": prompt}]
+	functions = None
+	response = await client.chat.completions.create(
+		model="gpt-4-1106-preview",
+		messages=messages,
+		tools=functions,
+		temperature=0.0,
+		tool_choice=None,
+	)
+	model_card = extract_json("{" + response.choices[0].message.content)
+	if model_card is None:
+		return json.loads(MODEL_CARD_TEMPLATE)
+	return model_card
 
 
 def embedding_chain(text: str) -> List:
-    print("Creating embeddings for text: {}".format(text[:100]))
-    client = OpenAI()
-    output = client.embeddings.create(model="text-embedding-ada-002", input=text)
-    return output.data[0].embedding
+	print("Creating embeddings for text: {}".format(text[:100]))
+	client = OpenAI()
+	output = client.embeddings.create(model="text-embedding-ada-002", input=text)
+	return output.data[0].embedding
 
+def config_from_dataset(amr: str, dataset_path: str):
+	agent = OpenAIAgent(DatasetConfig)
+	react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
+	query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
+	config = extract_json("{" + react_manager.run(query))
+	return config
 
 ### Tools for ReACt ###
 
 
 def ask_a_human(action_input: str):
-    """
-    Asks the end user for their input. Useful if there are no existing tools to solve your task.
-    You can rely on the user to search the web, provide personal details, and generally provide you with up-to-date information.
-    Only invoke this function if absolutely necessary, if you can't find a tool to solve your task. Do not bother the human with trivial tasks.
-    """
-    return input(action_input)
+	"""
+	Asks the end user for their input. Useful if there are no existing tools to solve your task.
+	You can rely on the user to search the web, provide personal details, and generally provide you with up-to-date information.
+	Only invoke this function if absolutely necessary, if you can't find a tool to solve your task. Do not bother the human with trivial tasks.
+	"""
+	return input(action_input)
 
 
 def get_date(action_input="%Y-%m-%d"):
-    """
-    Returns the current date.
-    """
-    return datetime.now().strftime(action_input)
+	"""
+	Returns the current date.
+	"""
+	return datetime.now().strftime(action_input)
 
 
 def read_csv(action_input: str, **kwargs) -> pd.DataFrame:
-    """
-    Reads a CSV file into a pandas DataFrame.
-    """
-    return pd.read_csv(action_input, **kwargs)
+	"""
+	Reads a CSV file into a pandas DataFrame.
+	"""
+	return pd.read_csv(action_input, **kwargs)
+
+
+def download_from_presigned_url(presigned_url: str):
+	"""
+	Download file from a presigned URL and save it in the working directory with the same name.
+
+	Args:
+		presigned_url (str): The presigned URL for the file.
+	"""
+	# Extract filename from the presigned URL
+	filename = presigned_url.split('/')[-1]
+
+	# Check if the file is already cached
+	if os.path.exists(filename):
+		print("File already cached.")
+		return
+
+	try:
+		# Download the file from the presigned URL
+		print("Downloading from presigned URL...")
+		response = requests.get(presigned_url)
+		with open(filename, 'wb') as f:
+			f.write(response.content)
+		print("Download complete.")
+	except Exception as e:
+		print(f"Error downloading file from presigned URL: {e}")

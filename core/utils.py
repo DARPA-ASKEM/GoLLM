@@ -76,7 +76,6 @@ def model_config_adapter(model_config: dict) -> dict:
     """
 
     output_json = {"conditions": []}
-    print(model_config)
     for condition_name, description in model_config["conditions"].items():
         condition_data = {
             "name": condition_name,

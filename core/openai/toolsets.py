@@ -1,4 +1,4 @@
-from core.openai.tool_utils import read_csv, get_date, ask_a_human
+from core.openai.tool_utils import read_csv, get_date, ask_a_human, download_from_presigned_url
 from core.entities import Toolset, Tool
 
 
@@ -23,5 +23,12 @@ with Toolset() as DatasetConfig:
 		["file_path", "**kwargs"],
 		"Reads a CSV file into a pandas DataFrame.",
 		read_csv,
+		str,
+	)
+    DatasetConfig.add_tool(
+		"download_from_presigned_url",
+		["presigned_url"],
+		"Download file from a presigned URL and save it in the working directory with the same name.",
+		download_from_presigned_url,
 		str,
 	)
