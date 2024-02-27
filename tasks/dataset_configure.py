@@ -8,7 +8,6 @@ from core.taskrunner import TaskRunnerInterface
 def cleanup():
     pass
 
-
 def main():
     exitCode = 0
     try:
@@ -23,7 +22,7 @@ def main():
 
         taskrunner.log("Sending request to OpenAI API")
         response = config_from_dataset(
-            url=input_model.url, amr=amr
+            dataset_path=input_model.url, amr=amr
         )
         taskrunner.log("Received response from OpenAI API")
 
