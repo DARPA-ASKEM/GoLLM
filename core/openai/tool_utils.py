@@ -1,23 +1,13 @@
-from datetime import datetime
 import json
 from openai import OpenAI, AsyncOpenAI
-import os
-import pandas as pd
-import requests
 from typing import List
-from core.utils import (
-	remove_references,
-	extract_json,
-	normalize_greek_alphabet,
-	exceeds_tokens,
-	model_config_adapter,
-)
-from core.openai.toolsets import DatasetConfig
-from core.openai.prompts.dataset_config import DATASET_PROMPT
+from core.utils import remove_references, extract_json, normalize_greek_alphabet, exceeds_tokens, model_config_adapter
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
-from core.openai.react import ReActManager, OpenAIAgent, AgentExecutor
+from core.openai.prompts.dataset_config import DATASET_PROMPT
+from core.openai.react import OpenAIAgent, AgentExecutor, ReActManager
+from core.openai.toolsets import DatasetConfig
 
 
 def escape_curly_braces(text: str):
@@ -31,6 +21,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
 	print("Reading model config from research paper: {}".format(research_paper[:100]))
 	research_paper = remove_references(research_paper)
 	research_paper = normalize_greek_alphabet(research_paper)
+
 	prompt = PETRINET_PROMPT.format(
 		petrinet=escape_curly_braces(amr),
 		research_paper=escape_curly_braces(research_paper),
@@ -110,14 +101,13 @@ async def amodel_card_chain(research_paper: str):
 		model="gpt-4-1106-preview",
 		messages=messages,
 		tools=functions,
-		temperature=0.0,
-		tool_choice=None,
+		top_p=0.0,
+		tool_choice=None
 	)
 	model_card = extract_json("{" + response.choices[0].message.content)
 	if model_card is None:
 		return json.loads(MODEL_CARD_TEMPLATE)
 	return model_card
-
 
 def embedding_chain(text: str) -> List:
 	print("Creating embeddings for text: {}".format(text[:100]))
@@ -125,9 +115,8 @@ def embedding_chain(text: str) -> List:
 	output = client.embeddings.create(model="text-embedding-ada-002", input=text)
 	return output.data[0].embedding
 
-def config_from_dataset(amr: str, dataset_path: str):
+def config_from_dataset(amr: str, dataset_path: str) -> str:
 	agent = OpenAIAgent(DatasetConfig)
 	react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
 	query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
-	config = extract_json("{" + react_manager.run(query))
-	return config
+	return react_manager.run(query)
