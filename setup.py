@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "openai==1.6.1",
+		"pandas",
         "pydantic==2.5.3",
         "regex",
         "tiktoken",

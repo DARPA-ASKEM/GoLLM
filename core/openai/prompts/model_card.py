@@ -22,24 +22,34 @@ MODEL_CARD_TEMPLATE = """
     "model_specs": "Details about the model's complexity, such as the number of places, transitions, parameter count, and arcs."
   },
   "Glossary": {
-    "terms": []
+    "terms": ["Str"]
   },
-  "ModelCardAuthors": [],
+  "ModelCardAuthors": ["Str"],
   "HowToGetStartedWithTheModel": {
-    "examples": ""
+    "examples": ["Str"]
   },
   "Citation": {
-    "references": []
+    "references": ["Str"]
   },
   "MoreInformation": {
-    "links": []
+    "links": ["Str"]
+  },
+  "StructuralInformation": {
+    "schema_name": ["Str"],
+    "parameter_names": ["Str"],
+    "domain": ["Str"],
+    "model_type": ["Str"],
+    "model_structure": ["Str"],
+    "model_parameters": ["Str"]
   }
 }
 """
 
 INSTRUCTIONS = """
-You are a helpful agent designed to populate a model card containing metadata about a given research paper and its associated model.\n
-Use the following research paper as a reference: ---PAPER START---{research_paper}---PAPER END--. Ensure that the output follows the below model card format.\n
+You are a helpful agent designed to populate a model card containing metadata about a given research paper and its associated model. You may have access to a research paper and a model configuration file. Structural information should come from the model configuration file. \n
+Model configurations may be in the form of a petri net, stock and flow, regnet, or other model formats.
+You may only have access to either a research paper or model configuration. Do your best to populate the model card with as much information as possible. If you cannot answer the entire query, provide as much information as possible. If there is no answer, use the string "null" as a placeholder. \n
+Use the following research paper as a reference: ---PAPER START---{research_paper}---PAPER END--. ---MODEL START-- {amr} ---MODEL END--- Ensure that the output follows the below model card format.\n
 TEMPLATE: {model_card_template}\n
-Make sure that the following text can be serialized as a JSON object:\n
-{{"""
+Make sure that the following text can be serialized as a JSON object. DO NOT USE ```json``` in the model card header within the json object:\n
+{{\n """

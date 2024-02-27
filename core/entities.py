@@ -9,6 +9,11 @@ class ConfigureModel(BaseModel):
 	amr: Dict  # expects AMR in JSON format
 
 
+class ConfigureModelDataset(BaseModel):
+	url: str
+	amr: Dict  # expects AMR in JSON format
+
+
 class ModelCardModel(BaseModel):
 	research_paper: str
 

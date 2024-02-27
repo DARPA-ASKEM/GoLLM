@@ -18,7 +18,6 @@ def remove_references(text: str) -> str:
 
 def extract_json(text: str) -> dict:
     corrected_text = text.replace("{{", "{").replace("}}", "}")
-    print(corrected_text)
     try:
         json_obj = json.loads(corrected_text)
         return json_obj
@@ -76,7 +75,6 @@ def model_config_adapter(model_config: dict) -> dict:
     """
 
     output_json = {"conditions": []}
-    print(model_config)
     for condition_name, description in model_config["conditions"].items():
         condition_data = {
             "name": condition_name,

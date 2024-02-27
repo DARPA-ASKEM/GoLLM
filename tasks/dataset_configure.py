@@ -1,7 +1,7 @@
 import json
 import sys
-from core.entities import ConfigureModel
-from core.openai.tool_utils import model_config_chain
+from core.entities import ConfigureModelDataset
+from core.openai.tool_utils import config_from_dataset
 from core.taskrunner import TaskRunnerInterface
 
 
@@ -12,18 +12,18 @@ def cleanup():
 def main():
     exitCode = 0
     try:
-        taskrunner = TaskRunnerInterface(description="Configure Model from paper CLI")
+        taskrunner = TaskRunnerInterface(description="Configure Model from dataset CLI")
         taskrunner.on_cancellation(cleanup)
 
         input_dict = taskrunner.read_input_with_timeout()
 
         taskrunner.log("Creating ConfigureModel from input")
-        input_model = ConfigureModel(**input_dict)
+        input_model = ConfigureModelDataset(**input_dict)
         amr = json.dumps(input_model.amr, separators=(",", ":"))
 
         taskrunner.log("Sending request to OpenAI API")
-        response = model_config_chain(
-            research_paper=input_model.research_paper, amr=amr
+        response = config_from_dataset(
+            url=input_model.url, amr=amr
         )
         taskrunner.log("Received response from OpenAI API")
 
