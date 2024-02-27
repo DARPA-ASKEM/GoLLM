@@ -5,7 +5,6 @@ from core.utils import remove_references, extract_json, normalize_greek_alphabet
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
-from core.openai.prompts.condition_map import CONDITION_MAP_PROMPT
 from core.openai.prompts.dataset_config import DATASET_PROMPT
 from core.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from core.openai.toolsets import DatasetConfig
