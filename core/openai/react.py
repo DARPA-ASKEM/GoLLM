@@ -53,12 +53,11 @@ class OpenAIAgent:
         )
         return output, sys_prompt, human_prompt
 
-
 class ScratchpadParser:
     thought_pattern = r"Thought:(.*?)(?=Action:|Observation:|$)"
     action_pattern = r"Action:\n```\n({.*?})\n```\n"
     observation_pattern = r"Observation:(.*?)(?=Thought:|Action:|$)"
-    action_blob_pattern = r"(?<=```json\n)\s*(.*?)\s*(?=```)"
+    action_blob_pattern = r"\{\{\s*'action':\s*(.*?),\s*'action_input':\s*(.*?)\s*\}\}"
     final_answer_pattern = r".*Final Answer: (.*)"
 
     @staticmethod
