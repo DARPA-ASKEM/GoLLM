@@ -18,7 +18,6 @@ def remove_references(text: str) -> str:
 
 def extract_json(text: str) -> dict:
     corrected_text = text.replace("{{", "{").replace("}}", "}")
-    print(corrected_text)
     try:
         json_obj = json.loads(corrected_text)
         return json_obj
