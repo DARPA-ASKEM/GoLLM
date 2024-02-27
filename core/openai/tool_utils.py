@@ -118,16 +118,14 @@ async def amodel_card_chain(research_paper: str):
 		return json.loads(MODEL_CARD_TEMPLATE)
 	return model_card
 
-
 def embedding_chain(text: str) -> List:
 	print("Creating embeddings for text: {}".format(text[:100]))
 	client = OpenAI()
 	output = client.embeddings.create(model="text-embedding-ada-002", input=text)
 	return output.data[0].embedding
 
-def config_from_dataset(amr: str, dataset_path: str):
+def config_from_dataset(amr: str, dataset_path: str) -> str:
 	agent = OpenAIAgent(DatasetConfig)
 	react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
 	query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
-	config = extract_json("{" + react_manager.run(query))
-	return config
+	return react_manager.run(query)
