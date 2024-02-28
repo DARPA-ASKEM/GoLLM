@@ -18,6 +18,10 @@ class ModelCardModel(BaseModel):
 	research_paper: str
 
 
+class ModelCompareModel(BaseModel):
+	model_cards: List
+
+
 class EmbeddingModel(BaseModel):
 	text: str
 	embedding_model: str

@@ -6,6 +6,7 @@ from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
 from core.openai.prompts.dataset_config import DATASET_PROMPT
+from core.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
 from core.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from core.openai.toolsets import DatasetConfig
 
@@ -120,3 +121,17 @@ def config_from_dataset(amr: str, dataset_path: str) -> str:
 	react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
 	query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
 	return react_manager.run(query)
+
+def compare_models(model_cards: List[str]) -> str:
+	prompt = MODEL_METADATA_COMPARE_PROMPT.format(model_cards="--------".join(model_cards))
+	client = OpenAI()
+	output = client.chat.completions.create(
+	model="gpt-3.5-turbo-0125",
+	top_p=0,
+	max_tokens=1024,
+	messages=[
+		{"role": "user", "content": prompt},
+	],
+)
+	return output.choices[0].message.content
+
