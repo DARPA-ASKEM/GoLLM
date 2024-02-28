@@ -116,11 +116,24 @@ def embedding_chain(text: str) -> List:
 	output = client.embeddings.create(model="text-embedding-ada-002", input=text)
 	return output.data[0].embedding
 
-def config_from_dataset(amr: str, dataset_path: str) -> str:
+def react_config_from_dataset(amr: str, dataset_path: str) -> str:
 	agent = OpenAIAgent(DatasetConfig)
 	react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
 	query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
 	return react_manager.run(query)
+
+def config_from_dataset(amr: str, datasets: str) -> str:
+	prompt = DATASET_PROMPT.format(amr=amr, dataset_path=datasets)
+	client = OpenAI()
+	output = client.chat.completions.create(
+		model="gpt-4-0125-preview",
+		top_p=0,
+		max_tokens=4000,
+		messages=[
+			{"role": "user", "content": prompt},
+		],
+		)
+	return json.loads(output.choices[0].message.content)
 
 def compare_models(model_cards: List[str]) -> str:
 	prompt = MODEL_METADATA_COMPARE_PROMPT.format(model_cards="--------".join(model_cards))

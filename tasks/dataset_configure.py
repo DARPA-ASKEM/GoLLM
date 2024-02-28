@@ -22,7 +22,7 @@ def main():
 
         taskrunner.log("Sending request to OpenAI API")
         response = config_from_dataset(
-            dataset_path=input_model.url, amr=amr
+            datasets=input_model.datasets, amr=amr
         )
         taskrunner.log("Received response from OpenAI API")
 

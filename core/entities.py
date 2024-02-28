@@ -10,7 +10,7 @@ class ConfigureModel(BaseModel):
 
 
 class ConfigureModelDataset(BaseModel):
-	url: str
+	datasets: str
 	amr: Dict  # expects AMR in JSON format
 
 
