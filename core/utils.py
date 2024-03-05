@@ -16,6 +16,17 @@ def remove_references(text: str) -> str:
     return new_text.strip()
 
 
+def parse_json_from_markdown(text):
+    print("Stripping markdown...")
+    json_pattern = r"```json\s*(\{.*?\})\s*```"
+    match = re.search(json_pattern, text, re.DOTALL)
+    if match:
+        return match.group(1)
+    else:
+        print(f"No markdown found in text: {text}")
+        return text
+
+
 def extract_json(text: str) -> dict:
     corrected_text = text.replace("{{", "{").replace("}}", "}")
     try:
@@ -23,6 +34,13 @@ def extract_json(text: str) -> dict:
         return json_obj
     except json.JSONDecodeError as e:
         raise ValueError(f"Error decoding JSON: {e}\nfrom text {text}")
+
+
+def postprocess_oai_json(output: str) -> dict:
+    output = "{" + parse_json_from_markdown(
+        output
+    )  # curly bracket is used in all prompts to denote start of json.
+    return extract_json(output)
 
 
 def normalize_greek_alphabet(text: str) -> str:

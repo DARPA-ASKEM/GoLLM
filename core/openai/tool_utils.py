@@ -3,10 +3,10 @@ from openai import OpenAI, AsyncOpenAI
 from typing import List
 from core.utils import (
     remove_references,
-    extract_json,
     normalize_greek_alphabet,
     exceeds_tokens,
     model_config_adapter,
+    postprocess_oai_json,
 )
 from core.openai.prompts.petrinet_config import PETRINET_PROMPT
 from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
@@ -36,13 +36,16 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4-0125-preview",
-        top_p=0,
         max_tokens=4000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
         messages=[
             {"role": "user", "content": prompt},
         ],
     )
-    config = extract_json("{" + output.choices[0].message.content)
+    config = postprocess_oai_json(output.choices[0].message.content)
     return model_config_adapter(config)
 
 
@@ -61,13 +64,16 @@ def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4-0125-preview",
-        top_p=0,
         max_tokens=4000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
         messages=[
             {"role": "user", "content": prompt},
         ],
     )
-    model_card = extract_json("{" + output.choices[0].message.content)
+    model_card = postprocess_oai_json(output.choices[0].message.content)
     if model_card is None:
         return json.loads(MODEL_CARD_TEMPLATE)
     return model_card
@@ -83,7 +89,10 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
-        top_p=0,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
         max_tokens=1024,
         messages=[
             {"role": "user", "content": prompt},
@@ -108,10 +117,14 @@ async def amodel_card_chain(research_paper: str):
         model="gpt-4-1106-preview",
         messages=messages,
         tools=functions,
-        top_p=0.0,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
+        max_tokens=1024,
         tool_choice=None,
     )
-    model_card = extract_json("{" + response.choices[0].message.content)
+    model_card = postprocess_oai_json(response.choices[0].message.content)
     if model_card is None:
         return json.loads(MODEL_CARD_TEMPLATE)
     return model_card
@@ -140,13 +153,16 @@ def config_from_dataset(amr: str, datasets: List[str]) -> str:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4-0125-preview",
-        top_p=0,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
         max_tokens=4000,
         messages=[
             {"role": "user", "content": prompt},
         ],
     )
-    return json.loads(output.choices[0].message.content)
+    return postprocess_oai_json(output.choices[0].message.content)
 
 
 def compare_models(model_cards: List[str]) -> str:
@@ -156,7 +172,10 @@ def compare_models(model_cards: List[str]) -> str:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
-        top_p=0,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
         max_tokens=1024,
         messages=[
             {"role": "user", "content": prompt},
