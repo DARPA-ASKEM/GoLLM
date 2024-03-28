@@ -97,9 +97,15 @@ def model_config_adapter(model_config: dict) -> dict:
         condition_data = {
             "name": condition_name,
             "description": description,
+			"initials": [],
             "parameters": [],
         }
-        for param_data in model_config["parameters"]:
+        for initial_data in model_config["initials"]:
+            initial_expression = initial_data["expression"].get(condition_name)
+            condition_data["initials"].append(
+                {"target": initial_data["target"], "expression": initial_expression}
+            )
+		for param_data in model_config["parameters"]:
             param_value = param_data["value"].get(condition_name)
             condition_data["parameters"].append(
                 {"id": param_data["id"], "value": param_value}
