@@ -90,9 +90,20 @@ def exceeds_tokens(prompt: str, max_tokens: int) -> bool:
 def model_config_adapter(model_config: dict) -> dict:
 	"""
     Adapter function which converts the model config dict to HMI expected format.
+    {
+    	"scenarios": [
+ 			{
+ 				"name": condition_name,
+      			"description": description,
+      			"initials": [ { "id": "initial_id", "value": 0.0 }, ... ],
+      			"parameters": [ { "id": "parameter_id", "value": 0.0 }, ... ]
+    		},
+    		...
+    	]
+    }
     """
 
-	output_json = {"conditions": []}
+	output_json = {"scenarios": []}
 	for condition_name, description in model_config["conditions"].items():
 		condition_data = {
 			"name": condition_name,
@@ -110,5 +121,5 @@ def model_config_adapter(model_config: dict) -> dict:
 			condition_data["parameters"].append(
 				{"id": param_data["id"], "value": param_value}
 			)
-		output_json["conditions"].append(condition_data)
+		output_json["scenarios"].append(condition_data)
 	return output_json
