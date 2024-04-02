@@ -11,8 +11,6 @@ that the output follows the below model configuration and is JSON serializable. 
 loading the dataset in your scratchpad, populate the missing values in the configuration as your final answer. Only
 write the parameter section of the configuration, not the entire configuration. Pay close attention to which
 parameter corresponds to which linkage: {{
->>>>>>> Stashed changes
-
 """
 
 DATASET_PROMPT = """
