@@ -6,15 +6,15 @@ Assume that parameter fields with missing values may have multiple different set
 user provided text for different conditions.\n
 Return the different sets of initial parameters for the petri net model file like so:
 {{
-    "conditions": [
- 		{
- 			"name": "name of condition",
- 			"description": "description of condition",
- 			"initials": [ { "target": "beta", "expression": 0.14 }, ... ],
- 			"parameters": [ { "id": "beta", "value": 0.16 }, ... ]
-    	},
-    	...
-    ]
+	"conditions": [
+		{
+			"name": "name of condition",
+			"description": "description of condition",
+			"initials": [ { "target": "beta", "expression": 0.14 }, ... ],
+			"parameters": [ { "id": "beta", "value": 0.16 }, ... ]
+		},
+		...
+  ]
 }}
 
 If a condition is not mentioned in the following text body, then the expression or value should be set to the string
