@@ -1,4 +1,5 @@
 import json
+
 import regex as re
 import tiktoken
 
@@ -95,8 +96,8 @@ def model_config_adapter(model_config: dict) -> dict:
  			{
  				"name": condition_name,
       			"description": description,
-      			"initials": [ { "target": "initial_id", "expression": 0.0 }, ... ],
-      			"parameters": [ { "id": "parameter_id", "value": 0.0 }, ... ]
+      			"initials": [ { "target": "beta", "expression": 0.14 }, ... ],
+      			"parameters": [ { "id": "beta", "value": 0.16 }, ... ]
     		},
     		...
     	]

@@ -9,9 +9,9 @@ Return the different sets of initial parameters for the petri net model file lik
     "conditions": [
  		{
  			"name": "name of condition",
-      		"description": "description of condition",
-      		"initials": [ { "target": "beta", "expression": 0.14 }, ... ],
-      		"parameters": [ { "id": "beta", "value": 0.16 }, ... ]
+ 			"description": "description of condition",
+ 			"initials": [ { "target": "beta", "expression": 0.14 }, ... ],
+ 			"parameters": [ { "id": "beta", "value": 0.16 }, ... ]
     	},
     	...
     ]
