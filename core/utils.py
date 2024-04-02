@@ -95,7 +95,7 @@ def model_config_adapter(model_config: dict) -> dict:
  			{
  				"name": condition_name,
       			"description": description,
-      			"initials": [ { "id": "initial_id", "value": 0.0 }, ... ],
+      			"initials": [ { "target": "initial_id", "expression": 0.0 }, ... ],
       			"parameters": [ { "id": "parameter_id", "value": 0.0 }, ... ]
     		},
     		...
