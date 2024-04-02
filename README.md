@@ -4,59 +4,66 @@
 
 This is a repository which contains endpoints for various Terrarium LLM workflows. 
 
-# Getting Started
 
 ## Running the API
 
-`cd` into root<br>
-run: ```docker build -t gollm .```<br>
-run: ```docker run -p 8000:8000 -e OPENAI_API_KEY=$OPENAI_API_KEY gollm```
+```shell
+docker build -t gollm .
+docker run -p 8000:8000 -e OPENAI_API_KEY=$OPENAI_API_KEY gollm
+```
 
 ## AMR configuration from paper and AMR
 
 Once the API has been started, the ```/configure``` endpoint will consume a JSON with the structure:<br>
-    ```
-    {
-    research_paper: str,
-    amr: obj 
-    }
-    ```<br>
+```json
+{
+    "research_paper": "This is a long research paper, perhaps 20 pages worth of text.",
+    "amr": {}
+}
+```
 
 The API will return a model configuration candidate with the structure <br>
+```json
+{
+  "response": {}
+}
 ```
-{response: obj}
-```
-<br>
+
 where `response` contains the AMR populated with configuration values.<br>
 
-<b>Note: This is a WIP, is unoptimized and is currently being used as a test case for integrating LLM features with Terrarium. </b>
+**Note: This is a WIP, is unoptimized and is currently being used as a test case for integrating LLM features with Terrarium.**
 
 ## AMR model card from paper
 
 Once the API has been started, the ```/model_card``` endpoint will consume a JSON with the structure:<br>
    
-```
-    {
-    research_paper: str,
-    }
+```json
+{
+    "research_paper": "string"
+}
 ```
 <br>
 The API will return a model card in JSON format
 <br>
 
-```
-{response: obj}
+```json
+{
+  "response": {}
+}
 ```
 
-<b> Note: This is a WIP </b>
-
-<hr>
+**Note: This is a WIP**
 
 ## Running GoLLM task executables.
 
-Start a fresh venv. Cd into GoLLM root, and call `pip install -e .` to install dependencies and build entrypoints for tasks. Run tasks like so:
+Start a fresh venv, then install dependencies and build entrypoints for tasks. 
+```shell
+pip install -e .
+```  
 
-```
+Run tasks like so:
+
+```shell
 gollm:model_card --input "{\"research_paper\":\"this is a long research paper, perhaps 20 pages worth of text.\"}"
 ```
 
