@@ -50,7 +50,7 @@ DATASET_PROMPT = """
 	Only populate values from the datasets. If a value is not present in the datasets, use the default value from the model configuration, or null.
 	The datasets may be in the form of a matrix where the index and column names are useful for mapping the values of initials and parameters within the dataset to the model.
 	Your goal is to map the dataset to the model and provide the results of the mapping. If you cannot map the dataset to the model, use the string "null" as a placeholder.
-	Use the following model configuration as a reference: ---MODEL CONFIGURATION START---{amr}---MODEL CONFIGURATION END---.  ---DATASETS START---{datasets}---DATASETS END--. Ensure that the output follows the below model configuration and is JSON serializable.
+	Use the following model configuration as a reference: ---MODEL CONFIGURATION START---{amr}---MODEL CONFIGURATION END---\n --- MODEL MAPPING START --- {matrix_str} ---MODEL MAPPING END ---\n  ---DATASETS START---{datasets}---DATASETS END--. Ensure that the output follows the below model configuration and is JSON serializable.
 	Once you have enough information from loading the dataset in your scratchpad, populate the missing values in the configuration as your final answer. Parameters should follow the format:\n
 		values: [
 			{{"id": "str", "value": float, "type": "parameter" or "initial"}},

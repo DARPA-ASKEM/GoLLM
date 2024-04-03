@@ -144,12 +144,12 @@ def react_config_from_dataset(amr: str, dataset_path: str) -> str:
     return react_manager.run(query)
 
 
-def config_from_dataset(amr: str, datasets: List[str]) -> str:
+def config_from_dataset(amr: str, model_mapping: str, datasets: List[str]) -> str:
     dataset_text = ""
     for idx in range(len(datasets)):
         dataset_text += f"..dataset_{idx + 1} start..\n {datasets[idx]} \n...dataset_{idx + 1} end...\n"
 
-    prompt = DATASET_PROMPT.format(amr=amr, datasets=dataset_text)
+    prompt = DATASET_PROMPT.format(amr=amr, matrix_str=model_mapping, datasets=dataset_text)
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4-0125-preview",

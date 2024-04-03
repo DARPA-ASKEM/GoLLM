@@ -12,6 +12,7 @@ class ConfigureModel(BaseModel):
 class ConfigureModelDataset(BaseModel):
     datasets: List[str]
     amr: Dict  # expects AMR in JSON format
+    matrix_str: str
 
 
 class ModelCardModel(BaseModel):
