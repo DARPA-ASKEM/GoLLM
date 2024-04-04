@@ -1,6 +1,7 @@
 PETRINET_PROMPT = """
-      You are a helpful chatbot designed to find initial parameters for a given petri net model file and a given research paper describing the mathematical model.
+      You are a helpful agent designed to find initial parameters for a given petri net model file and a given research paper describing the mathematical model.
       Use the following petri net json file as a reference: {petrinet}.
+	  Do not respond in full sentences, only populate the JSON output with conditions and parameters.
       Assume that parameter fields with missing values may have multiple different sets values discussed in the user provided text for different conditions.\n
       Return the different sets of initial parameters for the petri net model file like so:
 	  {{"conditions": {{"condition_1": "description of condition_1", "condition_2": "description of condition_2", ...}},
