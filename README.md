@@ -2,7 +2,7 @@
 
 # GoLLM
 
-This is a repository which contains endpoints for various Terrarium LLM workflows. 
+This is a repository which contains endpoints for various Terrarium LLM workflows.
 
 # Getting Started
 
@@ -18,7 +18,7 @@ Once the API has been started, the ```/configure``` endpoint will consume a JSON
     ```
     {
     research_paper: str,
-    amr: obj 
+    amr: obj
     }
     ```<br>
 
@@ -34,7 +34,7 @@ where `response` contains the AMR populated with configuration values.<br>
 ## AMR model card from paper
 
 Once the API has been started, the ```/model_card``` endpoint will consume a JSON with the structure:<br>
-   
+
 ```
     {
     research_paper: str,
@@ -51,17 +51,6 @@ The API will return a model card in JSON format
 <b> Note: This is a WIP </b>
 
 <hr>
-
-## Running GoLLM task executables.
-
-Start a fresh venv. Cd into GoLLM root, and call `pip install -e .` to install dependencies and build entrypoints for tasks. Run tasks like so:
-
-```
-gollm:model_card --input "{\"research_paper\":\"this is a long research paper, perhaps 20 pages worth of text.\"}"
-```
-
-Task output is written to stdout, followed by a terminating newline. 
-TODO: write dockerfile for running GoLLM tasks as CLI args. 
 
 ## License
 

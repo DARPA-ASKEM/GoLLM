@@ -3,10 +3,6 @@ import regex as re
 import tiktoken
 
 
-def escape_newlines(text: str) -> str:
-    return text.replace("\n", "\\n")
-
-
 def remove_references(text: str) -> str:
     """
     Removes reference sections from a scientific paper.
