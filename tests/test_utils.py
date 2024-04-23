@@ -1,4 +1,4 @@
-from core.utils import remove_references, extract_json
+from gollm.utils import remove_references, extract_json
 import unittest
 
 
