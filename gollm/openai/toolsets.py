@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from datetime import datetime
 import os
-from core.entities import Toolset
+from gollm.entities import Toolset
 
 
 ### Tools for ReACt ###

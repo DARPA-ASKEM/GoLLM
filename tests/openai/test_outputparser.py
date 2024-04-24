@@ -1,6 +1,6 @@
 import unittest
 import regex as re
-from core.openai.react import ScratchpadParser
+from gollm.openai.react import ScratchpadParser
 
 
 class TestScratchpadParser(unittest.TestCase):

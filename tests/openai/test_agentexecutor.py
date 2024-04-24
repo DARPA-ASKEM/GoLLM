@@ -1,6 +1,6 @@
 import unittest
-from core.openai.react import AgentExecutor
-from core.openai.entities import Toolset, Tool
+from gollm.openai.react import AgentExecutor
+from gollm.entities import Toolset, Tool
 
 
 def sample_tool_func(x):

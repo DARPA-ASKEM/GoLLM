@@ -3,14 +3,14 @@ from openai import OpenAI
 import regex as re
 from typing import List
 
-from core.openai.prompts.react import (
+from gollm.openai.prompts.react import (
     SYSTEM_MESSAGE_PREFIX,
     FORMAT_INSTRUCTIONS,
     SYSTEM_MESSAGE_SUFFIX,
     HUMAN_MESSAGE,
 )
 
-from core.entities import Message
+from gollm.entities import Message
 
 
 class OpenAIAgent:

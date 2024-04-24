@@ -1,20 +1,20 @@
 import json
 from openai import OpenAI, AsyncOpenAI
 from typing import List
-from core.utils import (
+from gollm.utils import (
     remove_references,
     normalize_greek_alphabet,
     exceeds_tokens,
     model_config_adapter,
     postprocess_oai_json,
 )
-from core.openai.prompts.petrinet_config import PETRINET_PROMPT
-from core.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
-from core.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
-from core.openai.prompts.dataset_config import DATASET_PROMPT
-from core.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
-from core.openai.react import OpenAIAgent, AgentExecutor, ReActManager
-from core.openai.toolsets import DatasetConfig
+from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT
+from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
+from gollm.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
+from gollm.openai.prompts.dataset_config import DATASET_PROMPT
+from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
+from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
+from gollm.openai.toolsets import DatasetConfig
 
 
 def escape_curly_braces(text: str):

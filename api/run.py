@@ -1,8 +1,8 @@
 from contextlib import contextmanager
 from fastapi import FastAPI, HTTPException
 import json
-from core.openai.tool_utils import model_config_chain, amodel_card_chain
-from core.entities import ConfigureModel, ModelCardModel
+from gollm.openai.tool_utils import model_config_chain, amodel_card_chain
+from gollm.entities import ConfigureModel, ModelCardModel
 
 app = FastAPI()
 
