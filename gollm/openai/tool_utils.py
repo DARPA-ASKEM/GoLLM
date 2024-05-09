@@ -41,7 +41,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         frequency_penalty=0,
         presence_penalty=0,
         seed=123,
-		response_format={ "type": "json_object" },
+		response_format={"type": "json_object"},
         messages=[
             {"role": "user", "content": prompt},
         ],
@@ -159,7 +159,7 @@ def config_from_dataset(amr: str, model_mapping: str, datasets: List[str]) -> st
         presence_penalty=0,
         seed=123,
         max_tokens=4000,
-		response_format={ "type": "json_object" },
+		response_format={"type": "json_object"},
         messages=[
             {"role": "user", "content": prompt},
         ],
