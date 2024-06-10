@@ -79,6 +79,52 @@ def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
         return json.loads(MODEL_CARD_TEMPLATE)
     return model_card
 
+def model_card_chain_ta1(research_paper: str = None, code_file: str = None) -> dict:
+    print("Creating model card...")
+    assert research_paper or code_file, "Either research_paper or code_file must be provided."
+    if not research_paper:
+        research_paper = "NO RESEARCH PAPER PROVIDED"
+    if not code_file:
+        code_file = "NO CODE FILE PROVIDED"
+
+    fields = [("DESCRIPTION",  "Short description of the model (1 sentence)."),
+		("AUTHOR_INST",  "Name of publishing institution."),
+		("AUTHOR_AUTHOR", "Name of author(s)."),
+		("AUTHOR_EMAIL", "Email address for the author of this model."),
+		("DATE",         "Date of publication of this model."),
+		("SCHEMA",       "Short description of the schema of inputs and outputs of the model (1 sentence)."),
+		("PROVENANCE",   "Short description (1 sentence) of how the model was trained."),
+		("ASSUMPTIONS",  "Short description (1 sentence) of the assumptions made by the model."),
+		("STRENGTHS",    "Short description (1 sentence) of the strengths of the model."),
+		("LIMITATIONS", "Short description (1 sentence) of the limitations of the model."),
+		("DATASET",      "Short description (1 sentence) of what dataset was used to train the model."),
+		("COMPLEXITY",  "The complexity of the model"),
+		("USAGE",        "Short description (1 sentence) of the context in which the model should be used"),
+		("LICENSE",      "License for this model."),
+    ]
+
+    prompt = INSTRUCTIONS.format(
+		FIELDS=fields,
+        TEXT=escape_curly_braces(research_paper),
+        CODE=escape_curly_braces(code_file)
+    )
+    client = OpenAI()
+    output = client.chat.completions.create(
+        model="gpt-4-0125-preview",
+        max_tokens=4000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
+    )
+    model_card = postprocess_oai_json(output.choices[0].message.content)
+    if model_card is None:
+        return json.loads(fields)
+    return model_card
+
 
 def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> str:
     print("Condensing chunks for query: {}".format(query[:100]))
