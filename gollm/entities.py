@@ -20,7 +20,7 @@ class ModelCardModel(BaseModel):
 
 
 class ModelCompareModel(BaseModel):
-    model_cards: List
+    cards: List # model cards
 
 
 class EmbeddingModel(BaseModel):
