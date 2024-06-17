@@ -35,12 +35,13 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4o-2024-05-13",
         max_tokens=4000,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
         seed=123,
+		temperature=0,
 		response_format={"type": "json_object"},
         messages=[
             {"role": "user", "content": prompt},
@@ -64,11 +65,12 @@ def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
     )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4o-2024-05-13",
         max_tokens=4000,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
+		temperature=0,
         seed=123,
         messages=[
             {"role": "user", "content": prompt},
@@ -89,10 +91,11 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
         )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model="gpt-4o-2024-05-13",
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
+		temperature=0,
         seed=123,
         max_tokens=1024,
         messages=[
@@ -115,12 +118,13 @@ async def amodel_card_chain(research_paper: str):
     messages = [{"role": "user", "content": prompt}]
     functions = None
     response = await client.chat.completions.create(
-        model="gpt-4-1106-preview",
+        model="gpt-4o-2024-05-13",
         messages=messages,
         tools=functions,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
+		temperature=0,
         seed=123,
         max_tokens=1024,
         tool_choice=None,
@@ -153,7 +157,8 @@ def config_from_dataset(amr: str, model_mapping: str, datasets: List[str]) -> st
     prompt = DATASET_PROMPT.format(amr=amr, matrix_str=model_mapping, datasets=dataset_text)
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4o-2024-05-13",
+		temperature=0,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
@@ -173,11 +178,12 @@ def compare_models(model_cards: List[str]) -> str:
     )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model="gpt-4o-2024-05-13",
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
         seed=123,
+		temperature=0,
         max_tokens=1024,
         messages=[
             {"role": "user", "content": prompt},
