@@ -13,6 +13,7 @@ from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from gollm.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
 from gollm.openai.prompts.dataset_config import DATASET_PROMPT
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
+from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
@@ -98,6 +99,23 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
 		temperature=0,
         seed=123,
         max_tokens=1024,
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
+    )
+    return output.choices[0].message.content
+
+def general_instruction(instruction: str) -> str:
+    prompt = GENERAL_INSTRUCTION_PROMPT.format(instruction=instruction)
+    client = OpenAI()
+    output = client.chat.completions.create(
+        model="gpt-4o-2024-05-13",
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+		temperature=0,
+        seed=123,
+        max_tokens=4000,
         messages=[
             {"role": "user", "content": prompt},
         ],
