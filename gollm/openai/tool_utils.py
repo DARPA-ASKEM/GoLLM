@@ -105,7 +105,7 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
     )
     return output.choices[0].message.content
 
-def general_instruction(instruction: str) -> str:
+def generate_response(instruction: str) -> str:
     prompt = GENERAL_INSTRUCTION_PROMPT.format(instruction=instruction)
     client = OpenAI()
     output = client.chat.completions.create(
