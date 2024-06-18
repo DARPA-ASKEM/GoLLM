@@ -115,7 +115,7 @@ def generate_response(instruction: str) -> str:
         presence_penalty=0,
 		temperature=0,
         seed=123,
-        max_tokens=4000,
+        max_tokens=1024,
         messages=[
             {"role": "user", "content": prompt},
         ],
