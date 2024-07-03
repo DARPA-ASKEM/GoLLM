@@ -25,7 +25,8 @@ def escape_curly_braces(text: str):
     return text.replace("{", "{{").replace("}", "}}")
 
 
-def model_config_chain(research_paper: str, amr: str) -> dict:
+# def model_config_chain(research_paper: str, amr: str) -> dict:
+def model_config_chain(research_paper: str, amr: str) -> any:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
     research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
@@ -49,7 +50,9 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         ],
     )
     config = postprocess_oai_json(output.choices[0].message.content)
-    return model_config_adapter(config)
+    return config
+    # print(config)
+    # return model_config_adapter(config)
 
 
 def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
