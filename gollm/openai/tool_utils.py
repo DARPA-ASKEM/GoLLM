@@ -30,10 +30,13 @@ def model_config_chain(research_paper: str, amr: str) -> any:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
     research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
+    with open('./probonto.json', 'r') as f:
+        pb = json.load(f)
 
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper),
+		pb=escape_curly_braces(pb)
     )
     client = OpenAI()
     output = client.chat.completions.create(
