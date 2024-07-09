@@ -31,6 +31,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
 
+	# probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
     with open(os.getcwd() + '/gollm/openai/prompts/probonto.json', 'r') as f:
         pb = json.load(f)
 
