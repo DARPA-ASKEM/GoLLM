@@ -1,4 +1,5 @@
 import json
+import os
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from gollm.utils import (
@@ -30,13 +31,14 @@ def model_config_chain(research_paper: str, amr: str) -> any:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
     research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
-    with open('./probonto.json', 'r') as f:
+
+    with open(os.getcwd() + '/gollm/openai/prompts/probonto.json', 'r') as f:
         pb = json.load(f)
 
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper),
-		pb=escape_curly_braces(pb)
+		pb=escape_curly_braces(json.dumps(pb))
     )
     client = OpenAI()
     output = client.chat.completions.create(
@@ -54,9 +56,6 @@ def model_config_chain(research_paper: str, amr: str) -> any:
     )
     config = postprocess_oai_json(output.choices[0].message.content)
     return config
-    # print(config)
-    # return model_config_adapter(config)
-
 
 def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
     print("Creating model card...")

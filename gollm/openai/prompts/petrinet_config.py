@@ -29,12 +29,11 @@ PETRINET_PROMPT = """
 	  - For the name, try best to give a name incorporating all the information you have. Try deriving the name from the id whenever it makes sense. Here are some example of id to name mappings: {{ id: "beta", name: "β" }},{{ id: "gamma", name: "γ" }}, {{ id: "S0", name: "S₀" }}, {{ id: "I0", name: "R₀" }}, {{ id: "beta", name: "β" }} etc. If name can't be generated, omit the field.
 	  - For the description, provide long-form description of the parameter. If the description can not be found, set it to an empty string "",
 	  - For units, provide both "units.expression" (a unicode string) and "units.expression_mathml" (MathML format). Make sure both units are valid and 'units.expression' and 'units.expression_mathml' represents the same unit. If the unit is not found or not valid, omit the units field.
-	  - For the distribution, provide the type of distribution and the parameters for the distribution. The type and the parameters must match corresponding ontology in the user provided provided probability distribution ontology. If the valid distribution is not found, omit the distribution field.
+	  - For the distribution, if present, provide 'distribution.type' and 'distribution.parameters' using 'name' and 'parameters' from the following probability distribution ontology JSON. If the valid distribution is not found, omit the distribution field. --START PROBABILITY DISTRIBUTION ONTOLOGY JSON-- {pb} --END PROBABILITY DISTRIBUTION ONTOLOGY JSON--
 
   	  Only use parameters found in the reference petrinet file provided above.
 
       Ensure that the output follows the above petri net format and can be serialized as a JSON. Specifically populate parameters and initials. Use the following
-      text body to answer the user's query: --START USER PROVIDED TEXT-- {research_paper}--END USER PROVIDED TEXT--\n\n  --START USER PROVIDED PROBABILITY DISTRIBUTION ONTOLOGY-- {pb} --END USER PROVIDED PROBABILITY DISTRIBUTION ONTOLOGY-- Answer:
+      text body to answer the user's query: --START USER PROVIDED TEXT-- {research_paper}--END USER PROVIDED TEXT--\n\n Answer:
          {{
 """
-
