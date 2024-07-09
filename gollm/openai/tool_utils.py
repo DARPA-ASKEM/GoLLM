@@ -18,6 +18,7 @@ from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def escape_curly_braces(text: str):
     """
@@ -32,7 +33,8 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     research_paper = normalize_greek_alphabet(research_paper)
 
 	# probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
-    with open(os.getcwd() + '/gollm/openai/prompts/probonto.json', 'r') as f:
+    json_path = os.path.join(SCRIPT_DIR, 'prompts', 'probonto.json')
+    with open(json_path, 'r') as f:
         pb = json.load(f)
 
     prompt = PETRINET_PROMPT.format(
