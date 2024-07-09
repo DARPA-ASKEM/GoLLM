@@ -12,5 +12,6 @@ setup(
         "tiktoken",
     ],
 	package_data={"gollm": ["**/*.json"]},
+	include_package_data=True,
     python_requires=">=3.8",
 )
