@@ -6,6 +6,7 @@ from gollm.utils import (
     remove_references,
     normalize_greek_alphabet,
     exceeds_tokens,
+	model_config_adapter,
     postprocess_oai_json,
 )
 from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT
@@ -54,7 +55,7 @@ def model_config_chain(research_paper: str, amr: str) -> any:
         ],
     )
     config = postprocess_oai_json(output.choices[0].message.content)
-    return config
+    return model_config_adapter(config)
 
 def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
     print("Creating model card...")
