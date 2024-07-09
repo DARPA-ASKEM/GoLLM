@@ -11,7 +11,7 @@ setup(
         "regex",
         "tiktoken",
     ],
-	package_data={"gollm": ["**/*.json"]},
+	package_data={"gollm.openai.prompts": ["*.json"]},
 	include_package_data=True,
     python_requires=">=3.8",
 )
