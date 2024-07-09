@@ -26,8 +26,7 @@ def escape_curly_braces(text: str):
     return text.replace("{", "{{").replace("}", "}}")
 
 
-# def model_config_chain(research_paper: str, amr: str) -> dict:
-def model_config_chain(research_paper: str, amr: str) -> any:
+def model_config_chain(research_paper: str, amr: str) -> dict:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
     research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
