@@ -11,6 +11,6 @@ setup(
         "regex",
         "tiktoken",
     ],
-	package_data={"gollm": ["*.json"]},
+	package_data={"gollm": ["**/*.json"]},
     python_requires=">=3.8",
 )
