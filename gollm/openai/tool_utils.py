@@ -6,7 +6,6 @@ from gollm.utils import (
     remove_references,
     normalize_greek_alphabet,
     exceeds_tokens,
-    model_config_adapter,
     postprocess_oai_json,
 )
 from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT

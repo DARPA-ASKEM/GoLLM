@@ -26,10 +26,10 @@ PETRINET_PROMPT = """
       Instead of 'condition_1' and 'condition_2'.. use names that are descriptive of the conditions.
 
 	  For each parameter, following below instructions, fill the value for `name`, `description`, `units`, and `distribution` fields if not provided in the petrinet file.
-	  - For the name, try best to give a name incorporating all the information you have. Try deriving the name from the id whenever it makes sense. Here are some example of id to name mappings: {{ id: "beta", name: "β" }},{{ id: "gamma", name: "γ" }}, {{ id: "S0", name: "S₀" }}, {{ id: "I0", name: "R₀" }}, {{ id: "beta", name: "β" }} etc. If name can't be generated, omit the field.
+	  - For the name, extract from the user provided text or derive it from the id whenever possible. Here are some examples of id to name mappings: {{ id: "beta", name: "β" }}, {{ id: "gamma", name: "γ" }}, {{ id: "S0", name: "S₀" }}, {{ id: "I0", name: "R₀" }}. If a name can't be generated, omit the field.
 	  - For the description, provide long-form description of the parameter. If the description can not be found, set it to an empty string "",
-	  - For units, provide both "units.expression" (a unicode string) and "units.expression_mathml" (MathML format). Make sure both units are valid and 'units.expression' and 'units.expression_mathml' represents the same unit. If the unit is not found or not valid, omit the units field.
-	  - For the distribution, if present, provide 'distribution.type' and 'distribution.parameters' using 'name' and 'parameters' from the following probability distribution ontology JSON. If the valid distribution is not found, omit the distribution field. --START PROBABILITY DISTRIBUTION ONTOLOGY JSON-- {pb} --END PROBABILITY DISTRIBUTION ONTOLOGY JSON--
+	  - For units, provide both "units.expression" (a unicode string) and "units.expression_mathml" (MathML format). Ensure both units are valid and represent the same unit. If the unit is not found or not valid, omit the units field.
+	  - For the distribution, if present, provide 'distribution.type' and 'distribution.parameters' using 'name' and 'parameters' from the following probability distribution ontology JSON. If a valid distribution is not found, omit the distribution field. --START PROBABILITY DISTRIBUTION ONTOLOGY JSON-- {pb} --END PROBABILITY DISTRIBUTION ONTOLOGY JSON--
 
   	  Only use parameters found in the reference petrinet file provided above.
 
