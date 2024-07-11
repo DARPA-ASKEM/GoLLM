@@ -1,4 +1,5 @@
 import json
+import os
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from gollm.utils import (
@@ -17,6 +18,7 @@ from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def escape_curly_braces(text: str):
     """
@@ -30,9 +32,15 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
 
+	# probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
+    json_path = os.path.join(SCRIPT_DIR, 'prompts', 'probonto.json')
+    with open(json_path, 'r') as f:
+        pb = json.load(f)
+
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper),
+		pb=escape_curly_braces(json.dumps(pb))
     )
     client = OpenAI()
     output = client.chat.completions.create(
@@ -50,7 +58,6 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     )
     config = postprocess_oai_json(output.choices[0].message.content)
     return model_config_adapter(config)
-
 
 def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
     print("Creating model card...")

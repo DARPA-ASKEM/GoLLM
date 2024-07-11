@@ -98,7 +98,7 @@ def model_config_adapter(model_config: dict) -> dict:
         for param_data in model_config["parameters"]:
             param_value = param_data["value"].get(condition_name)
             condition_data["parameters"].append(
-                {"id": param_data["id"], "value": param_value}
+                {"id": param_data["id"], "value": param_value, "name": param_data.get("name"), "description": param_data.get("description"), "units": param_data.get("units"), "distribution": param_data.get("distribution")}
             )
         output_json["conditions"].append(condition_data)
     return output_json
