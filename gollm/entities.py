@@ -20,7 +20,7 @@ class ModelCardModel(BaseModel):
 
 
 class ModelCompareModel(BaseModel):
-    cards: List # model cards
+    amrs: List[Dict]  # expects AMRs in JSON format
 
 
 class EmbeddingModel(BaseModel):

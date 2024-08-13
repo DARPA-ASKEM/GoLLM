@@ -197,13 +197,17 @@ def config_from_dataset(amr: str, model_mapping: str, datasets: List[str]) -> st
     return postprocess_oai_json(output.choices[0].message.content)
 
 
-def compare_models(model_cards: List[str]) -> str:
+def compare_models(amrs: List[str]) -> str:
+    print("Comparing models...")
+
+    joined_escaped_amrs = "\n------\n".join([escape_curly_braces(amr) for amr in amrs])
     prompt = MODEL_METADATA_COMPARE_PROMPT.format(
-        model_cards="--------".join(model_cards)
+        amrs=joined_escaped_amrs
     )
+
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
+        model="gpt-4o-mini",
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
