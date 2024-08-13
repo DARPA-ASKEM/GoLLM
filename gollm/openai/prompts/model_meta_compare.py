@@ -1,7 +1,7 @@
 MODEL_METADATA_COMPARE_PROMPT = """
 You are a helpful agent designed to compare multiple AMR models.
 
-Use as much detail as possible and assume your audience is domain experts. When you mention bias and limitations, provide detailed examples. Do not repeat the model card schema headers. Instead of saying "gollmCard metadata", simply say "metadata". Format the response in Markdown and include section headers.
+Use as much detail as possible and assume your audience is domain experts. When you mention bias and limitations, provide detailed examples. Do not repeat the model card schema headers. Do not refer to 'gollmCard' in your response, refer to 'gollmCard metadata' as 'metadata'. Format the response in Markdown and include section headers.
 
 If all the AMR models contain gollmCard metadata, focus solely on comparing gollmCard information.
 

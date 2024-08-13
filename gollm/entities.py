@@ -20,7 +20,7 @@ class ModelCardModel(BaseModel):
 
 
 class ModelCompareModel(BaseModel):
-    amrs: List[str]  # expects AMRs to be a stringified in JSON object
+    amrs: List[str]  # expects AMRs to be a stringified JSON object
 
 
 class EmbeddingModel(BaseModel):

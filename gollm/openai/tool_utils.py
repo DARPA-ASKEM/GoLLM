@@ -213,7 +213,7 @@ def compare_models(amrs: List[str]) -> str:
         presence_penalty=0,
         seed=123,
 		temperature=0,
-        max_tokens=1024,
+        max_tokens=2048,
         messages=[
             {"role": "user", "content": prompt},
         ],
