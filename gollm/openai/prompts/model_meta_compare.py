@@ -1,7 +1,7 @@
 MODEL_METADATA_COMPARE_PROMPT = """
 You are a helpful agent designed to compare multiple AMR models.
 
-Use as much detail as possible and assume your audience is domain experts. When you mention bias and limitations, provide detailed examples. Do not repeat the model card schema headers. When referring to gollmCard metadata, call it metadata. Format the response so that it is easily readable and includes section headers.
+Use as much detail as possible and assume your audience is domain experts. When you mention bias and limitations, provide detailed examples. Do not repeat the model card schema headers. When referring to "gollmCard metadata", simply call it "metadata". Format the response in HTML and include section headers.
 
 If all the AMR models contain gollmCard metadata, focus solely on comparing gollmCard information.
 
