@@ -8,6 +8,7 @@ from gollm.utils import (
     exceeds_tokens,
     model_config_adapter,
     postprocess_oai_json,
+    parse_param_initials,
 )
 from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT
 from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
@@ -15,6 +16,7 @@ from gollm.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
 from gollm.openai.prompts.dataset_config import DATASET_PROMPT
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
 from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
+from gollm.openai.prompts.amr_enrichment import ENRICH_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
@@ -29,7 +31,6 @@ def escape_curly_braces(text: str):
 
 def model_config_chain(research_paper: str, amr: str) -> dict:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
-    research_paper = remove_references(research_paper)
     research_paper = normalize_greek_alphabet(research_paper)
 
 	# probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
@@ -58,6 +59,30 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     )
     config = postprocess_oai_json(output.choices[0].message.content)
     return model_config_adapter(config)
+
+
+def amr_enrichment_chain(amr: str, research_paper:str) -> dict:
+    amr_param_states = parse_param_initials(amr)
+    prompt = ENRICH_PROMPT.format(
+		param_initial_dict=amr_param_states,
+		paper_text=escape_curly_braces(research_paper)
+	)
+    client = OpenAI()
+    output = client.chat.completions.create(
+		model="gpt-4o-2024-05-13",
+		max_tokens=4000,
+		top_p=1,
+		frequency_penalty=0,
+		presence_penalty=0,
+		seed=123,
+		temperature=0,
+		response_format={"type": "json_object"},
+		messages=[
+			{"role": "user", "content": prompt},
+		],
+	)
+    return postprocess_oai_json(output.choices[0].message.content)
+
 
 def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
     print("Creating model card...")

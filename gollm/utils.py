@@ -11,6 +11,28 @@ def remove_references(text: str) -> str:
     new_text = re.sub(pattern, "", text)
     return new_text.strip()
 
+def c(amr: dict):
+	try:
+		ode = amr['semantics']['ode']
+	except KeyError:
+		raise KeyError("ODE semantics not found in AMR, please provide a valide AMR with structure semantics.ode")
+
+	assert 'parameters' in ode, "No parameters found in ODE semantics, please provide a valid AMR with structure semtnatics.ode.parameters"
+	assert 'initials' in ode, "No initials found in ODE semantics, please provide a valid AMR with structure semantics.ode.initials"
+
+	params = ode['parameters']
+
+	assert all(['id' in p.keys() for  p in params]), "All parameters must have an 'id' key"
+
+	param_ids = [p['id'] for p in params if p is not None and p.get('id')]
+
+	initials = ode['initials']
+
+	assert all(['target' in i.keys() for i in initials]), "All initials must have an 'id' key"
+
+	initial_ids = [i['target'] for i in initials if i is not None and i.get('target')]
+
+	return {'initial_names': initial_ids, 'param_names': param_ids}
 
 def parse_json_from_markdown(text):
     print("Stripping markdown...")
