@@ -11,7 +11,7 @@ def remove_references(text: str) -> str:
     new_text = re.sub(pattern, "", text)
     return new_text.strip()
 
-def c(amr: dict):
+def parse_param_initials(amr: dict):
 	try:
 		ode = amr['semantics']['ode']
 	except KeyError:
