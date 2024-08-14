@@ -38,6 +38,11 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     with open(json_path, 'r') as f:
         pb = json.load(f)
 
+	# Read the configuration.json file
+	config_path = os.path.join(SCRIPT_DIR, 'configuration.json')
+	with open(config_path, 'r') as config_file:
+		response_schema = json.load(config_file)
+
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper),
@@ -52,11 +57,11 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         presence_penalty=0,
         seed=123,
 		temperature=0,
-		response_format={"type": "json_object"},
+		response_format=response_schema,
         messages=[
             {"role": "user", "content": prompt},
-        ],
-    )
+        ]
+	)
     config = postprocess_oai_json(output.choices[0].message.content)
     return model_config_adapter(config)
 
@@ -241,6 +246,6 @@ def compare_models(amrs: List[str]) -> str:
         max_tokens=2048,
         messages=[
             {"role": "user", "content": prompt},
-        ],
+        ]
     )
     return output.choices[0].message.content

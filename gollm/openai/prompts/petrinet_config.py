@@ -1,39 +1,43 @@
 PETRINET_PROMPT = """
-      You are a helpful agent designed to find initial parameters for a given petri net model file and a given research paper describing the mathematical model.
-      Use the following petri net json file as a reference: {petrinet}.
-	  Do not respond in full sentences, only populate the JSON output with conditions and parameters.
-      Assume that parameter fields with missing values may have multiple different sets values discussed in the user provided text for different conditions.\n
-      Return the different sets of initial parameters for the petri net model file like so:
-	  {{"conditions": {{"condition_1": "description of condition_1", "condition_2": "description of condition_2", ...}},
-	  "parameters": [{{
-		"id": "beta",
-		"name": "β",
-		"value": {{'condition_1': 0.1, 'condition_2': 0.2}},
-		"description": "infection rate",
-		"units": {{ "expression": "1/(person*day)", "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>person</ci><ci>day</ci></apply></apply>" }}
-		"distribution": {{
-			"type": "Uniform1",
-			"parameters": {{
-				"minimum": 2.6e-7,
-				"maximum": 2.8e-7
-			}}
-		}},
-      ....
-      }}
-	  ],
-      }}
-      If a condition is not mentioned in the following text body, then the value should be set to the string "null". Be sure to use consistent naming conventions for the conditions.
-      Instead of 'condition_1' and 'condition_2'.. use names that are descriptive of the conditions.
+You are a helpful agent designed to find model configurations for a given petri net model file and a given research paper describing the mathematical model.
 
-	  For each parameter, following below instructions, fill the value for `name`, `description`, `units`, and `distribution` fields if not provided in the petrinet file.
-	  - For the name, extract from the user provided text or derive it from the id whenever possible. Here are some examples of id to name mappings: {{ id: "beta", name: "β" }}, {{ id: "gamma", name: "γ" }}, {{ id: "S0", name: "S₀" }}, {{ id: "I0", name: "R₀" }}. If a name can't be generated, omit the field.
-	  - For the description, provide long-form description of the parameter. If the description can not be found, set it to an empty string "",
-	  - For units, provide both "units.expression" (a unicode string) and "units.expression_mathml" (MathML format). Ensure both units are valid and represent the same unit. If the unit is not found or not valid, omit the units field.
-	  - For the distribution, if present, provide 'distribution.type' and 'distribution.parameters' using 'name' and 'parameters' from the following probability distribution ontology JSON. If a valid distribution is not found, omit the distribution field. Make sure following JSON content is only used for the distribution field and must not affect other fields. --START PROBABILITY DISTRIBUTION ONTOLOGY JSON-- {pb} --END PROBABILITY DISTRIBUTION ONTOLOGY JSON--
+Use the following petri net json file as a reference:
 
-  	  Only use parameters found in the reference petrinet file provided above.
+--START PETRI NET MODEL JSON--
+{petrinet}
+--END PETRI NET MODEL JSON--
 
-      Ensure that the output follows the above petri net format and can be serialized as a JSON. Specifically populate parameters and initials. Use the following
-      text body to answer the user's query: --START USER PROVIDED TEXT-- {research_paper}--END USER PROVIDED TEXT--\n\n Answer:
-         {{
+Assume that there are multiple model configurations in the user provided text for different conditions. Be sure to use consistent naming conventions for the conditions. Instead of 'condition_1' and 'condition_2'.. use names that are descriptive of the conditions.
+
+For each model configuration only use initial variables and parameters found in the reference Petri net model. Unsure that you follow the instructions below:
+	- Create a value for `name` and `description` from the user supplied text.
+	- For the description, provide long-form description of the condition. If the description can not be created from the user provided text, set it to an empty string "".
+	- `model_id` should reference the id of the Petri net model.
+		- For each initial in the Petri net model ODE semantics, create a initial semantic object with the following fields:
+		- `target` should reference the id of the initial variable
+		- `source` should reference the title or file name of the research paper
+		- `type` should be set to "initial"
+		- `expression` should be written in LaTeX format
+		- `expression_mathml` should be written in MathML format
+	- For `expression` and `expression_mathml`, Ensure both are valid and represent the same unit. If the unit is not found or not valid, omit the units field.
+	- For each parameter in the Petri net model ODE semantics, create a parameter semantic object with the following fields:
+		- `reference_id` should reference the id of the parameter.
+		- `source` should reference the title or file name of the research paper.
+		- `type` should be set to "parameter".
+		- If the extracted parameter value is a constant, set the parameter `value` to the constant value and set `type` to "constant".
+		- If the extracted parameter value is a distribution, set the distribution type using 'name' and from the following probability distribution ontology JSON and populate the `minimum` and `maximum` fields.
+
+--START PROBABILITY DISTRIBUTION ONTOLOGY JSON--
+{pb}
+--END PROBABILITY DISTRIBUTION ONTOLOGY JSON--
+
+Use the following text body to answer the query:
+
+--START USER PROVIDED TEXT--
+{research_paper}
+--END USER PROVIDED TEXT--
+
+Do not respond in full sentences, only create a json object that satisfies the json schema specified in the response format.
+
+Answer:
 """
