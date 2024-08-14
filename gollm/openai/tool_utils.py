@@ -39,7 +39,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         pb = json.load(f)
 
     # Read the configuration.json file
-    config_path = os.path.join(SCRIPT_DIR, 'configuration.json')
+    config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')
     with open(config_path, 'r') as config_file:
         response_schema = json.load(config_file)
 
