@@ -75,7 +75,7 @@
               "distribution": {
                 "$ref": "#/$defs/model_distribution"
               },
-              "id": {
+              "reference_id": {
                 "type": "string"
               },
               "source": {
@@ -87,7 +87,7 @@
             },
             "required": [
               "distribution",
-              "id",
+              "reference_id",
               "source",
               "type"
             ],
@@ -118,7 +118,6 @@
             "required": [
               "expression",
               "expression_mathml",
-              "id",
               "source",
               "target",
               "type"
@@ -163,7 +162,7 @@
             "required": [
               "expression",
               "expression_mathml",
-              "id",
+              "reference_id",
               "source",
               "states",
               "type"
@@ -191,7 +190,7 @@
             },
             "required": [
               "distribution",
-              "id",
+              "reference_id",
               "source",
               "type"
             ],
