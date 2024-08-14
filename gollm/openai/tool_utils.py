@@ -33,15 +33,15 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     print("Reading model config from research paper: {}".format(research_paper[:100]))
     research_paper = normalize_greek_alphabet(research_paper)
 
-	# probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
+    # probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
     json_path = os.path.join(SCRIPT_DIR, 'prompts', 'probonto.json')
     with open(json_path, 'r') as f:
         pb = json.load(f)
 
-	# Read the configuration.json file
-	config_path = os.path.join(SCRIPT_DIR, 'configuration.json')
-	with open(config_path, 'r') as config_file:
-		response_schema = json.load(config_file)
+    # Read the configuration.json file
+    config_path = os.path.join(SCRIPT_DIR, 'configuration.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
 
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
