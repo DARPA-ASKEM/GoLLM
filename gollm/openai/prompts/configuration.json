@@ -1,162 +1,224 @@
 {
-	"$schema" : "https://json-schema.org/draft/2020-12/schema",
-	"$defs" : {
-		"parameters" : {
-			"type" : "object",
-			"properties" : {
-				"value": {
-					"type": [ "number", "null" ]
-				},
-				"minimum": {
-					"type": [ "number", "null" ]
-				},
-				"maximum": {
-					"type": [ "number", "null" ]
-				}
-			},
-			"required" : [ "value", "minimum", "maximum" ],
-			"additional_properties" : false
-		},
-		"model_distribution" : {
-			"type" : "object",
-			"properties" : {
-				"parameters" : {
-					"$ref" : "#/$defs/parameters"
-				},
-				"type" : {
-					"type" : "string"
-				}
-			},
-			"required" : [ "parameters", "type" ],
-			"additional_properties" : false
-		},
-		"semantic_type" : {
-			"type" : "string",
-			"enum" : [ "initial", "parameter", "observable", "inferred" ]
-		},
-		"model_configuration" : {
-			"type" : "object",
-			"properties" : {
-				"description" : {
-					"type" : [ "string", "null" ]
-				},
-				"inferred_parameter_list" : {
-					"type" : [ "array", "null" ],
-					"items" : {
-						"type" : "object",
-						"properties" : {
-							"distribution" : {
-								"$ref" : "#/$defs/model_distribution"
-							},
-							"id" : {
-								"type" : "string"
-							},
-							"source" : {
-								"type" : "string"
-							},
-							"type" : {
-								"$ref" : "#/$defs/semantic_type"
-							}
-						},
-						"required" : [ "distribution", "id", "source", "type" ],
-						"additional_properties" : false
-					}
-				},
-				"initial_semantic_list" : {
-					"type" : "array",
-					"items" : {
-						"type" : "object",
-						"properties" : {
-							"expression" : {
-								"type" : "string"
-							},
-							"expression_mathml" : {
-								"type" : "string"
-							},
-							"source" : {
-								"type" : "string"
-							},
-							"target" : {
-								"type" : "string"
-							},
-							"type" : {
-								"$ref" : "#/$defs/semantic_type"
-							}
-						},
-						"required" : [ "expression", "expression_mathml", "id", "source", "target", "type" ],
-						"additional_properties" : false
-					}
-				},
-				"model_id" : {
-					"type" : "string",
-					"format" : "uuid"
-				},
-				"name" : {
-					"type" : "string"
-				},
-				"observable_semantic_list" : {
-					"type" : "array",
-					"items" : {
-						"type" : "object",
-						"properties" : {
-							"expression" : {
-								"type" : "string"
-							},
-							"expression_mathml" : {
-								"type" : "string"
-							},
-							"reference_id" : {
-								"type" : "string"
-							},
-							"source" : {
-								"type" : "string"
-							},
-							"states" : {
-								"type" : "array",
-								"items" : {
-									"type" : "string"
-								}
-							},
-							"type" : {
-								"$ref" : "#/$defs/semantic_type"
-							}
-						},
-						"required" : [ "expression", "expression_mathml", "id", "source", "states", "type" ],
-						"additional_properties" : false
-					}
-				},
-				"parameter_semantic_list" : {
-					"type" : "array",
-					"items" : {
-						"type" : "object",
-						"properties" : {
-							"distribution" : {
-								"$ref" : "#/$defs/model_distribution"
-							},
-							"reference_id" : {
-								"type" : "string"
-							},
-							"source" : {
-								"type" : "string"
-							},
-							"type" : {
-								"$ref" : "#/$defs/semantic_type"
-							}
-						},
-						"required" : [ "distribution", "id", "source", "type" ],
-						"additional_properties" : false
-					}
-				}
-			},
-			"required" : [ "description", "inferred_parameter_list", "initial_semantic_list", "model_id", "name", "observable_semantic_list", "parameter_semantic_list" ],
-			"additional_properties" : false
-		}
-	},
-	"type" : [ "array", "null" ],
-	"items" : {
-		"type" : {
-			"$ref" : "#/$defs/model_configuration"
-		},
-		"additional_properties" : false
-	}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "minimum": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "maximum": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "minimum",
+        "maximum"
+      ],
+      "additional_properties": false
+    },
+    "model_distribution": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "$ref": "#/$defs/parameters"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "parameters",
+        "type"
+      ],
+      "additional_properties": false
+    },
+    "semantic_type": {
+      "type": "string",
+      "enum": [
+        "initial",
+        "parameter",
+        "observable",
+        "inferred"
+      ]
+    },
+    "model_configuration": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inferred_parameter_list": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "distribution": {
+                "$ref": "#/$defs/model_distribution"
+              },
+              "id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/semantic_type"
+              }
+            },
+            "required": [
+              "distribution",
+              "id",
+              "source",
+              "type"
+            ],
+            "additional_properties": false
+          }
+        },
+        "initial_semantic_list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "expression": {
+                "type": "string"
+              },
+              "expression_mathml": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/semantic_type"
+              }
+            },
+            "required": [
+              "expression",
+              "expression_mathml",
+              "id",
+              "source",
+              "target",
+              "type"
+            ],
+            "additional_properties": false
+          }
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "observable_semantic_list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "expression": {
+                "type": "string"
+              },
+              "expression_mathml": {
+                "type": "string"
+              },
+              "reference_id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "states": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "type": {
+                "$ref": "#/$defs/semantic_type"
+              }
+            },
+            "required": [
+              "expression",
+              "expression_mathml",
+              "id",
+              "source",
+              "states",
+              "type"
+            ],
+            "additional_properties": false
+          }
+        },
+        "parameter_semantic_list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "distribution": {
+                "$ref": "#/$defs/model_distribution"
+              },
+              "reference_id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "#/$defs/semantic_type"
+              }
+            },
+            "required": [
+              "distribution",
+              "id",
+              "source",
+              "type"
+            ],
+            "additional_properties": false
+          }
+        }
+      },
+      "required": [
+        "description",
+        "inferred_parameter_list",
+        "initial_semantic_list",
+        "model_id",
+        "name",
+        "observable_semantic_list",
+        "parameter_semantic_list"
+      ],
+      "additional_properties": false
+    }
+  },
+  "type": [
+    "array",
+    "null"
+  ],
+  "items": {
+    "type": {
+      "$ref": "#/$defs/model_configuration"
+    },
+    "additional_properties": false
+  }
 }
