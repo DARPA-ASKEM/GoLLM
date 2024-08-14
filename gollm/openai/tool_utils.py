@@ -57,7 +57,10 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         presence_penalty=0,
         seed=123,
 		temperature=0,
-		response_format=response_schema,
+		response_format={
+			"type": "json_schema",
+			"json_schema": response_schema
+		},
         messages=[
             {"role": "user", "content": prompt},
         ]
