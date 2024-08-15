@@ -50,7 +50,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
+        model="gpt-4o-2024-08-06",
         max_tokens=4000,
         top_p=1,
         frequency_penalty=0,
