@@ -6,3 +6,4 @@ pydantic==2.8.2
 regex
 tiktoken
 uvicorn
+jsonschema

@@ -10,6 +10,7 @@ setup(
         "pydantic==2.8.2",
         "regex",
         "tiktoken",
+        "jsonschema"
     ],
 	package_data={"gollm.openai.prompts": ["*.json"]},
 	include_package_data=True,
