@@ -1,60 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "minimum": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "maximum": {
-          "type": [
-            "number",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "value",
-        "minimum",
-        "maximum"
-      ],
-      "additional_properties": false
-    },
-    "model_distribution": {
-      "type": "object",
-      "properties": {
-        "parameters": {
-          "$ref": "#/$defs/parameters"
-        },
-        "type": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "parameters",
-        "type"
-      ],
-      "additional_properties": false
-    },
-    "semantic_type": {
-      "type": "string",
-      "enum": [
-        "initial",
-        "parameter",
-        "observable",
-        "inferred"
-      ]
-    },
     "model_configuration": {
       "type": "object",
       "properties": {
@@ -73,7 +19,46 @@
             "type": "object",
             "properties": {
               "distribution": {
-                "$ref": "#/$defs/model_distribution"
+                "type": "object",
+                "properties": {
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "minimum": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "maximum": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "minimum",
+                      "maximum"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "parameters",
+                  "type"
+                ],
+                "additionalProperties": false
               },
               "reference_id": {
                 "type": "string"
@@ -82,7 +67,13 @@
                 "type": "string"
               },
               "type": {
-                "$ref": "#/$defs/semantic_type"
+                "type": "string",
+                "enum": [
+                  "initial",
+                  "parameter",
+                  "observable",
+                  "inferred"
+                ]
               }
             },
             "required": [
@@ -91,7 +82,7 @@
               "source",
               "type"
             ],
-            "additional_properties": false
+            "additionalProperties": false
           }
         },
         "initial_semantic_list": {
@@ -112,7 +103,13 @@
                 "type": "string"
               },
               "type": {
-                "$ref": "#/$defs/semantic_type"
+                "type": "string",
+                "enum": [
+                  "initial",
+                  "parameter",
+                  "observable",
+                  "inferred"
+                ]
               }
             },
             "required": [
@@ -122,12 +119,11 @@
               "target",
               "type"
             ],
-            "additional_properties": false
+            "additionalProperties": false
           }
         },
         "model_id": {
-          "type": "string",
-          "format": "uuid"
+          "type": "string"
         },
         "name": {
           "type": "string"
@@ -156,7 +152,13 @@
                 }
               },
               "type": {
-                "$ref": "#/$defs/semantic_type"
+                "type": "string",
+                "enum": [
+                  "initial",
+                  "parameter",
+                  "observable",
+                  "inferred"
+                ]
               }
             },
             "required": [
@@ -167,7 +169,7 @@
               "states",
               "type"
             ],
-            "additional_properties": false
+            "additionalProperties": false
           }
         },
         "parameter_semantic_list": {
@@ -176,7 +178,46 @@
             "type": "object",
             "properties": {
               "distribution": {
-                "$ref": "#/$defs/model_distribution"
+                "type": "object",
+                "properties": {
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "minimum": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "maximum": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "minimum",
+                      "maximum"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "parameters",
+                  "type"
+                ],
+                "additionalProperties": false
               },
               "reference_id": {
                 "type": "string"
@@ -185,7 +226,13 @@
                 "type": "string"
               },
               "type": {
-                "$ref": "#/$defs/semantic_type"
+                "type": "string",
+                "enum": [
+                  "initial",
+                  "parameter",
+                  "observable",
+                  "inferred"
+                ]
               }
             },
             "required": [
@@ -194,7 +241,7 @@
               "source",
               "type"
             ],
-            "additional_properties": false
+            "additionalProperties": false
           }
         }
       },
@@ -207,17 +254,21 @@
         "observable_semantic_list",
         "parameter_semantic_list"
       ],
-      "additional_properties": false
+      "additionalProperties": false
     }
   },
-  "type": [
-    "array",
-    "null"
+  "type": "object",
+  "properties": {
+    "conditions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/model_configuration"
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "conditions"
   ],
-  "items": {
-    "type": {
-      "$ref": "#/$defs/model_configuration"
-    },
-    "additional_properties": false
-  }
+  "additionalProperties": false
 }

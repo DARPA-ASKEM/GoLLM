@@ -24,3 +24,12 @@ end_of_line = crlf
 
 [*.gradle]
 indent_size = 4
+
+[*.json]
+indent_size = 2
+indent_style = space
+
+[*.py]
+indent_size = 4
+indent_style = space
+
