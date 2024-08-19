@@ -126,7 +126,7 @@ def model_config_adapter(model_config: dict) -> dict:
     # otherwise, remove the maximum and minimum keys.
     for condition in model_config["conditions"]:
         print(condition)
-        for param in condition["parameter_semantic_list"]:
+        for param in condition["parameterSemanticList"]:
             if param["distribution"]["type"] != "constant":
                 param["distribution"]["parameters"].pop("value", None)
             else:
