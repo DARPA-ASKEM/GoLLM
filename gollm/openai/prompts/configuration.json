@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
-    "model_configuration": {
+    "modelConfiguration": {
       "type": "object",
       "properties": {
         "description": {
@@ -10,7 +10,7 @@
             "null"
           ]
         },
-        "inferred_parameter_list": {
+        "inferredParameterList": {
           "type": [
             "array",
             "null"
@@ -60,7 +60,7 @@
                 ],
                 "additionalProperties": false
               },
-              "reference_id": {
+              "referenceId": {
                 "type": "string"
               },
               "source": {
@@ -78,14 +78,14 @@
             },
             "required": [
               "distribution",
-              "reference_id",
+              "referenceId",
               "source",
               "type"
             ],
             "additionalProperties": false
           }
         },
-        "initial_semantic_list": {
+        "initialSemanticList": {
           "type": "array",
           "items": {
             "type": "object",
@@ -93,7 +93,7 @@
               "expression": {
                 "type": "string"
               },
-              "expression_mathml": {
+              "expressionMathml": {
                 "type": "string"
               },
               "source": {
@@ -114,7 +114,7 @@
             },
             "required": [
               "expression",
-              "expression_mathml",
+              "expressionMathml",
               "source",
               "target",
               "type"
@@ -122,13 +122,13 @@
             "additionalProperties": false
           }
         },
-        "model_id": {
+        "modelId": {
           "type": "string"
         },
         "name": {
           "type": "string"
         },
-        "observable_semantic_list": {
+        "observableSemanticList": {
           "type": "array",
           "items": {
             "type": "object",
@@ -136,10 +136,10 @@
               "expression": {
                 "type": "string"
               },
-              "expression_mathml": {
+              "expressionMathml": {
                 "type": "string"
               },
-              "reference_id": {
+              "referenceId": {
                 "type": "string"
               },
               "source": {
@@ -163,8 +163,8 @@
             },
             "required": [
               "expression",
-              "expression_mathml",
-              "reference_id",
+              "expressionMathml",
+              "referenceId",
               "source",
               "states",
               "type"
@@ -172,7 +172,7 @@
             "additionalProperties": false
           }
         },
-        "parameter_semantic_list": {
+        "parameterSemanticList": {
           "type": "array",
           "items": {
             "type": "object",
@@ -219,7 +219,7 @@
                 ],
                 "additionalProperties": false
               },
-              "reference_id": {
+              "referenceId": {
                 "type": "string"
               },
               "source": {
@@ -237,7 +237,7 @@
             },
             "required": [
               "distribution",
-              "reference_id",
+              "referenceId",
               "source",
               "type"
             ],
@@ -247,12 +247,12 @@
       },
       "required": [
         "description",
-        "inferred_parameter_list",
-        "initial_semantic_list",
-        "model_id",
+        "inferredParameterList",
+        "initialSemanticList",
+        "modelId",
         "name",
-        "observable_semantic_list",
-        "parameter_semantic_list"
+        "observableSemanticList",
+        "parameterSemanticList"
       ],
       "additionalProperties": false
     }
@@ -262,7 +262,7 @@
     "conditions": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/model_configuration"
+        "$ref": "#/$defs/modelConfiguration"
       },
       "additionalProperties": false
     }
