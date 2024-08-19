@@ -54,7 +54,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-        seed=416,
+        seed=905,
         temperature=0,
         response_format={
             "type": "json_schema",
