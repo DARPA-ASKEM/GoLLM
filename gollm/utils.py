@@ -125,6 +125,7 @@ def model_config_adapter(model_config: dict) -> dict:
     # if the distribution is not `contant`, remove the `value` key
     # otherwise, remove the maximum and minimum keys.
     for condition in model_config["conditions"]:
+        print(condition)
         for param in condition["parameter_semantic_list"]:
             if param["distribution"]["type"] != "constant":
                 param["distribution"]["parameters"].pop("value", None)

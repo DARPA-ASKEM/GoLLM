@@ -31,21 +31,22 @@ def escape_curly_braces(text: str):
 
 
 def model_config_chain(research_paper: str, amr: str) -> dict:
-    print("Reading model config from research paper: {}".format(research_paper[:100]))
+    print("Extracting and formatting research paper...")
     research_paper = normalize_greek_alphabet(research_paper)
 
-    # Read the configuration.json file
+    print("Uploading and validating model configuration schema...")
     config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')
     with open(config_path, 'r') as config_file:
         response_schema = json.load(config_file)
-
     validate_schema(response_schema)
 
+    print("Building prompt to extract model configurations from a reasearch paper...")
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper)
     )
 
+    print("Sending request to OpenAI API...")
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4o-2024-08-06",
@@ -53,7 +54,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-        seed=123,
+        seed=416,
         temperature=0,
         response_format={
             "type": "json_schema",
@@ -67,6 +68,7 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
         ]
     )
 
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
     output_json = json.loads(output.choices[0].message.content)
     return model_config_adapter(output_json)
 
