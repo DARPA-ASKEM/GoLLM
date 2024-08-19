@@ -33,8 +33,8 @@ For each condition, create a model configuration JSON object that satisfies the 
     b.	`source` should reference the title or file name of the research paper.
     c.	`type` should be set to "parameter".
     d.	Be sure to extract parameter values from the user-provided text, and do not use the default values from the Petri net model.
-        -	If the extracted parameter value is a single constant value, set the parameter `value` to the constant value and set `type` to "constant".
-        -	If the extracted parameter value is a distribution with a maximum and minimum value, set `type` to only "uniform" and populate the `minimum` and `maximum` fields.
+        -	If the extracted parameter value is a single constant value, set the parameter `value` to the constant value and set `type` to "Constant".
+        -	If the extracted parameter value is a distribution with a maximum and minimum value, set `type` to only "Uniform" and populate the `minimum` and `maximum` fields.
 
 Do not respond in full sentences; only create a JSON object that satisfies the JSON schema specified in the response format.
 
