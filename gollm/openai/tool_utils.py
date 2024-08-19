@@ -70,6 +70,9 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
 
     print("Received response from OpenAI API. Formatting response to work with HMI...")
     output_json = json.loads(output.choices[0].message.content)
+
+    print("There are ", len(output_json["conditions"]), "conditions identified from the text.")
+
     return model_config_adapter(output_json)
 
 

@@ -116,21 +116,28 @@ def exceeds_tokens(prompt: str, max_tokens: int) -> bool:
     return False
 
 
+# Adapter function which converts the model config dict to HMI expected format.
 def model_config_adapter(model_config: dict) -> dict:
-    """
-    Adapter function which converts the model config dict to HMI expected format.
-    """
-
     # for each condition and for each parameter semantic in the model configuration,
     # if the distribution is not `contant`, remove the `value` key
     # otherwise, remove the maximum and minimum keys.
     for condition in model_config["conditions"]:
         print(condition)
         for param in condition["parameterSemanticList"]:
-            if param["distribution"]["type"] != "constant":
-                param["distribution"]["parameters"].pop("value", None)
-            else:
+            if param["distribution"]["type"] == "constant":
                 param["distribution"]["parameters"].pop("minimum", None)
                 param["distribution"]["parameters"].pop("maximum", None)
+            elif param["distribution"]["type"] == "uniform":
+                param["distribution"]["parameters"].pop("value", None)
+            else:
+                if "value" in param["distribution"]["parameters"]:
+                    param["distribution"]["type"] = "constant"
+                    param["distribution"]["parameters"].pop("minimum", None)
+                    param["distribution"]["parameters"].pop("maximum", None)
+                elif "minimum" in param["distribution"]["parameters"] and "maximum" in param["distribution"]["parameters"]:
+                    param["distribution"]["type"] = "uniform"
+                    param["distribution"]["parameters"].pop("value", None)
+                else:
+                    raise ValueError("Invalid distribution type")
 
     return model_config
