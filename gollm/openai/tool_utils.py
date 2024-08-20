@@ -3,20 +3,21 @@ import os
 from openai import OpenAI, AsyncOpenAI
 from typing import List
 from gollm.utils import (
-    remove_references,
-    normalize_greek_alphabet,
     exceeds_tokens,
     model_config_adapter,
-    postprocess_oai_json,
+    normalize_greek_alphabet,
     parse_param_initials,
+    postprocess_oai_json,
+    remove_references,
+    validate_schema
 )
-from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT
-from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
+from gollm.openai.prompts.amr_enrichment import ENRICH_PROMPT
 from gollm.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
 from gollm.openai.prompts.dataset_config import DATASET_PROMPT
-from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
 from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
-from gollm.openai.prompts.amr_enrichment import ENRICH_PROMPT
+from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
+from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
+from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
@@ -30,35 +31,49 @@ def escape_curly_braces(text: str):
 
 
 def model_config_chain(research_paper: str, amr: str) -> dict:
-    print("Reading model config from research paper: {}".format(research_paper[:100]))
+    print("Extracting and formatting research paper...")
     research_paper = normalize_greek_alphabet(research_paper)
 
-	# probonto ontology file copied from https://github.com/gyorilab/mira/blob/e468059089681c7cd457acc51821b5bd1074df04/mira/dkg/resources/probonto.json
-    json_path = os.path.join(SCRIPT_DIR, 'prompts', 'probonto.json')
-    with open(json_path, 'r') as f:
-        pb = json.load(f)
+    print("Uploading and validating model configuration schema...")
+    config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
+    validate_schema(response_schema)
 
+    print("Building prompt to extract model configurations from a reasearch paper...")
     prompt = PETRINET_PROMPT.format(
         petrinet=escape_curly_braces(amr),
-        research_paper=escape_curly_braces(research_paper),
-		pb=escape_curly_braces(json.dumps(pb))
+        research_paper=escape_curly_braces(research_paper)
     )
+
+    print("Sending request to OpenAI API...")
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
+        model="gpt-4o-2024-08-06",
         max_tokens=4000,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-        seed=123,
-		temperature=0,
-		response_format={"type": "json_object"},
+        seed=905,
+        temperature=0,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "model_configurations",
+                "schema": response_schema
+            }
+        },
         messages=[
             {"role": "user", "content": prompt},
-        ],
+        ]
     )
-    config = postprocess_oai_json(output.choices[0].message.content)
-    return model_config_adapter(config)
+
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
+    output_json = json.loads(output.choices[0].message.content)
+
+    print("There are ", len(output_json["conditions"]), "conditions identified from the text.")
+
+    return model_config_adapter(output_json)
 
 
 def amr_enrichment_chain(amr: str, research_paper:str) -> dict:
@@ -241,6 +256,6 @@ def compare_models(amrs: List[str]) -> str:
         max_tokens=2048,
         messages=[
             {"role": "user", "content": prompt},
-        ],
+        ]
     )
     return output.choices[0].message.content

@@ -1,8 +1,9 @@
 ## Used for docker image.
 fastapi
-openai==1.6.1
+openai==1.40.6
 pandas
-pydantic==2.5.3
+pydantic==2.8.2
 regex
 tiktoken
 uvicorn
+jsonschema
