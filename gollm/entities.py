@@ -6,13 +6,12 @@ from typing import List, Callable, Type, Dict
 
 class ConfigureModel(BaseModel):
     research_paper: str
-    amr: Dict  # expects AMR in JSON format
+    amr: str  # expects AMR in a stringified JSON object
 
 
 class ConfigureModelDataset(BaseModel):
     datasets: List[str]
-    amr: Dict  # expects AMR in JSON format
-    matrix_str: str
+    amr: str  # expects AMR in a stringified JSON object
 
 
 class ModelCardModel(BaseModel):
