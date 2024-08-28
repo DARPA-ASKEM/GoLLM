@@ -163,7 +163,7 @@ def generate_response(instruction: str, response_format: ResponseFormat | None =
         presence_penalty=0,
 		temperature=0,
         seed=123,
-        max_tokens=1024,
+        max_tokens=4000,
         response_format=response_format,
         messages=[
             {"role": "user", "content": prompt},
