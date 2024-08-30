@@ -1,6 +1,7 @@
 import json
 import os
 from openai import OpenAI, AsyncOpenAI
+from openai.types.chat.completion_create_params import ResponseFormat
 from typing import List
 from gollm.utils import (
     exceeds_tokens,
@@ -158,8 +159,7 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
     )
     return output.choices[0].message.content
 
-
-def generate_response(instruction: str) -> str:
+def generate_response(instruction: str, response_format: ResponseFormat | None = None) -> str:
     prompt = GENERAL_INSTRUCTION_PROMPT.format(instruction=instruction)
     client = OpenAI()
     output = client.chat.completions.create(
@@ -169,7 +169,8 @@ def generate_response(instruction: str) -> str:
         presence_penalty=0,
 		temperature=0,
         seed=123,
-        max_tokens=1024,
+        max_tokens=2048,
+        response_format=response_format,
         messages=[
             {"role": "user", "content": prompt},
         ],
