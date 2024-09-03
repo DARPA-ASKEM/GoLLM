@@ -215,23 +215,9 @@ def embedding_chain(text: str) -> List:
     return output.data[0].embedding
 
 
-def react_config_from_dataset(amr: str, dataset_path: str) -> str:
-    agent = OpenAIAgent(DatasetConfig)
-    react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
-    query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
-    return react_manager.run(query)
-
-
-def config_from_dataset(amr: str, datasets: List[str]) -> str:
+def config_from_dataset(amr: str, dataset: List[str]) -> str:
     print("Extracting datasets...")
-    dataset_text = ""
-    for idx in range(len(datasets)):
-        dataset_text += f"---DATASET {idx + 1} START---"
-        dataset_text += os.linesep
-        dataset_text += f"{datasets[idx]}"
-        dataset_text += os.linesep
-        dataset_text += f"---DATASET {idx + 1} END---"
-        dataset_text += os.linesep
+    dataset_text = os.linesep.join(dataset)
 
     print("Uploading and validating model configuration schema...")
     config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')

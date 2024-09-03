@@ -10,7 +10,7 @@ class ConfigureModel(BaseModel):
 
 
 class ConfigureModelDataset(BaseModel):
-    datasets: List[str]
+    dataset: List[str]
     amr: str  # expects AMR in a stringified JSON object
 
 
