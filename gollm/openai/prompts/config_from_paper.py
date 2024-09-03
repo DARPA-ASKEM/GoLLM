@@ -34,6 +34,8 @@ For each condition, create a model configuration JSON object that satisfies the 
     d.	Be sure to extract parameter values from the user-provided text, and do not use the default values from the AMR model.
         -	If the extracted parameter value is a single constant value, set the parameter `value` to the constant value and set `type` to "Constant".
         -	If the extracted parameter value is a distribution with a maximum and minimum value, set `type` to only "Uniform" and populate the `minimum` and `maximum` fields.
+6. `observableSemanticList` should be an empty list.
+7. `inferredParameterList` should be an empty list.
 
 Do not respond in full sentences; only create a JSON object that satisfies the JSON schema specified in the response format.
 
