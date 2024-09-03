@@ -20,7 +20,7 @@ Be sure to use consistent naming conventions for the conditions. Instead of 'con
 For each condition, create a model configuration JSON object that satisfies the JSON schema specified in the response format. To do this, follow the instructions below:
 1.	Create a value for `name` and `description` from the user-provided text.
 2.	For the description, provide a long-form description of the condition. If the description cannot be created from the user-provided text, set it to an empty string.
-3.	`model_id` should reference the id of the AMR model.
+3.	`model_id` id a UUID. If the AMR model has an id, you can use it. Otherwise, you can set as the nil UUID "00000000-0000-0000-0000-000000000000".
 4.	For each initial specified in the AMR model ODE semantics, create an initial semantic object. Do not create new initial semantic objects if they are not included in the original AMR model. You should set initial semantic object fields using the following rules:
     a.	`target` should reference the id of the initial variable from the AMR model ODE semantics.
     b.	`source` should reference the title or file name of the research paper.

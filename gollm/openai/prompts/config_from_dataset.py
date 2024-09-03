@@ -54,7 +54,7 @@ Based on this information, we do not know the initial values for I_1 and S_1. Do
 If the user-supplied dataset is a model-mapping dataset, you must create a model configuration JSON object that satisfies the JSON schema specified in the response format. To do this, follow the instructions below:
     1.	Using metadata from the AMR model and the user-supplied dataset, create values for `name` and `description`.
     2.	Provide a long-form description for the description. Set it to an empty string if it cannot be created from the provided metadata.
-    3.	`model_id` should reference the id of the AMR model.
+    3.	`model_id` id a UUID. If the AMR model has an id, you can use it. Otherwise, you can set as the nil UUID "00000000-0000-0000-0000-000000000000".
     4.	Create a parameter semantic object for each parameter specified in the AMR model ODE semantics. Do not create new parameter semantic objects if they are not included in the original AMR model. You should set parameter semantic object fields using the following rules:
         a.	`reference_id` should reference the id of the parameter.
         b.	`source` should reference the title or file name of the user-supplied dataset.
@@ -72,7 +72,7 @@ CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT = """
 If the user-supplied dataset is a time-series dataset, you must create a model configuration JSON object that satisfies the JSON schema specified in the response format. To do this, follow the instructions below:
     1.	Using metadata from the AMR model and the user-supplied dataset, create values for `name` and `description`.
     2.	Provide a long-form description for the description. If it cannot be created from the provided metadata, set it to an empty string.
-    3.	`model_id` should reference the id of the AMR model.
+    3.	`model_id` id a UUID. If the AMR model has an id, you can use it. Otherwise, you can set as the nil UUID "00000000-0000-0000-0000-000000000000".
     4.	Create an initial semantic object for each initial specified in the AMR model ODE semantics. Do not create new initial semantic objects if they are not included in the original AMR model. You should set initial semantic object fields using the following rules:
         a.	`target` should reference the id of the initial variable from the AMR model ODE semantics.
         b.	`source` should reference the title or file name of the user-supplied dataset.
