@@ -37,7 +37,7 @@ def escape_curly_braces(text: str):
     return text.replace("{", "{{").replace("}", "}}")
 
 
-def model_config_chain(research_paper: str, amr: str) -> dict:
+def model_config_from_paper(research_paper: str, amr: str) -> dict:
     print("Extracting and formatting research paper...")
     research_paper = normalize_greek_alphabet(research_paper)
 
@@ -215,7 +215,7 @@ def embedding_chain(text: str) -> List:
     return output.data[0].embedding
 
 
-def config_from_dataset(amr: str, dataset: List[str]) -> str:
+def model_config_from_dataset(amr: str, dataset: List[str]) -> str:
     print("Extracting datasets...")
     dataset_text = os.linesep.join(dataset)
 

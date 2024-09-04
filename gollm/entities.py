@@ -4,7 +4,7 @@ from pydantic import BaseModel, root_validator
 from typing import List, Callable, Type, Dict
 
 
-class ConfigureModel(BaseModel):
+class ConfigureModelPaper(BaseModel):
     research_paper: str
     amr: str  # expects AMR in a stringified JSON object
 
