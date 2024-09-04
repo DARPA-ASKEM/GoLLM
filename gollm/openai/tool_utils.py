@@ -24,7 +24,7 @@ from gollm.openai.prompts.config_from_dataset import (
 from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
 from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
-from gollm.openai.prompts.config_from_paper import CONFIGURE_FROM_PAPER_PROMPT
+from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
@@ -37,7 +37,7 @@ def escape_curly_braces(text: str):
     return text.replace("{", "{{").replace("}", "}}")
 
 
-def model_config_from_paper(research_paper: str, amr: str) -> dict:
+def model_config_from_document(research_paper: str, amr: str) -> dict:
     print("Extracting and formatting research paper...")
     research_paper = normalize_greek_alphabet(research_paper)
 
@@ -48,7 +48,7 @@ def model_config_from_paper(research_paper: str, amr: str) -> dict:
     validate_schema(response_schema)
 
     print("Building prompt to extract model configurations from a reasearch paper...")
-    prompt = CONFIGURE_FROM_PAPER_PROMPT.format(
+    prompt = CONFIGURE_FROM_DOCUMENT_PROMPT.format(
         amr=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper)
     )

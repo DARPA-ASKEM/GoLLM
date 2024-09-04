@@ -1,4 +1,4 @@
-CONFIGURE_FROM_PAPER_PROMPT = """
+CONFIGURE_FROM_DOCUMENT_PROMPT = """
 You are a helpful agent designed to find multiple model configurations for a given AMR model of various conditions described in a research paper.
 
 Use the following AMR model JSON file as a reference:
