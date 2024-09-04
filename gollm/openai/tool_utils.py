@@ -14,11 +14,17 @@ from gollm.utils import (
 )
 from gollm.openai.prompts.amr_enrichment import ENRICH_PROMPT
 from gollm.openai.prompts.condense import CONDENSE_PROMPT, format_chunks
-from gollm.openai.prompts.dataset_config import DATASET_PROMPT
+from gollm.openai.prompts.config_from_dataset import (
+    CONFIGURE_FROM_DATASET_PROMPT,
+    CONFIGURE_FROM_DATASET_DATASET_PROMPT,
+    CONFIGURE_FROM_DATASET_MAPPING_PROMPT,
+    CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT,
+    CONFIGURE_FROM_DATASET_AMR_PROMPT
+)
 from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
 from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
-from gollm.openai.prompts.petrinet_config import PETRINET_PROMPT
+from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PROMPT
 from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
 from gollm.openai.toolsets import DatasetConfig
 
@@ -31,7 +37,7 @@ def escape_curly_braces(text: str):
     return text.replace("{", "{{").replace("}", "}}")
 
 
-def model_config_chain(research_paper: str, amr: str) -> dict:
+def model_config_from_document(research_paper: str, amr: str) -> dict:
     print("Extracting and formatting research paper...")
     research_paper = normalize_greek_alphabet(research_paper)
 
@@ -42,8 +48,8 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     validate_schema(response_schema)
 
     print("Building prompt to extract model configurations from a reasearch paper...")
-    prompt = PETRINET_PROMPT.format(
-        petrinet=escape_curly_braces(amr),
+    prompt = CONFIGURE_FROM_DOCUMENT_PROMPT.format(
+        amr=escape_curly_braces(amr),
         research_paper=escape_curly_braces(research_paper)
     )
 
@@ -51,12 +57,12 @@ def model_config_chain(research_paper: str, amr: str) -> dict:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4o-2024-08-06",
-        max_tokens=4000,
-        top_p=1,
         frequency_penalty=0,
+        max_tokens=4000,
         presence_penalty=0,
         seed=905,
         temperature=0,
+        top_p=1,
         response_format={
             "type": "json_schema",
             "json_schema": {
@@ -209,34 +215,47 @@ def embedding_chain(text: str) -> List:
     return output.data[0].embedding
 
 
-def react_config_from_dataset(amr: str, dataset_path: str) -> str:
-    agent = OpenAIAgent(DatasetConfig)
-    react_manager = ReActManager(agent, executor=AgentExecutor(toolset=DatasetConfig))
-    query = DATASET_PROMPT.format(amr=amr, dataset_path=dataset_path)
-    return react_manager.run(query)
+def model_config_from_dataset(amr: str, dataset: List[str]) -> str:
+    print("Extracting datasets...")
+    dataset_text = os.linesep.join(dataset)
 
+    print("Uploading and validating model configuration schema...")
+    config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
+    validate_schema(response_schema)
 
-def config_from_dataset(amr: str, model_mapping: str, datasets: List[str]) -> str:
-    dataset_text = ""
-    for idx in range(len(datasets)):
-        dataset_text += f"..dataset_{idx + 1} start..\n {datasets[idx]} \n...dataset_{idx + 1} end...\n"
+    print("Building prompt to extract model configurations from a dataset...")
+    prompt = CONFIGURE_FROM_DATASET_PROMPT + CONFIGURE_FROM_DATASET_MAPPING_PROMPT + CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT + CONFIGURE_FROM_DATASET_AMR_PROMPT.format(amr=amr) + CONFIGURE_FROM_DATASET_DATASET_PROMPT.format(data=dataset_text) + "Answer:"
 
-    prompt = DATASET_PROMPT.format(amr=amr, matrix_str=model_mapping, datasets=dataset_text)
+    print("Sending request to OpenAI API...")
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
-		temperature=0,
-        top_p=1,
+        model="gpt-4o-2024-08-06",
         frequency_penalty=0,
+        max_tokens=10000,
         presence_penalty=0,
         seed=123,
-        max_tokens=4000,
-		response_format={"type": "json_object"},
+        temperature=0,
+        top_p=1,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "model_configurations",
+                "schema": response_schema
+            }
+        },
         messages=[
             {"role": "user", "content": prompt},
         ],
     )
-    return postprocess_oai_json(output.choices[0].message.content)
+
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
+    output_json = json.loads(output.choices[0].message.content)
+
+    print("There are ", len(output_json["conditions"]), "conditions identified from the datasets.")
+
+    return model_config_adapter(output_json)
 
 
 def compare_models(amrs: List[str]) -> str:
