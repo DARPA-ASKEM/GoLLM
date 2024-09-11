@@ -1,9 +1,9 @@
 CONFIGURE_FROM_DATASET_PROMPT = """
-You are a helpful agent designed to create a model configuration for a given AMR model from a set of user-supplied CSV datasets.
+You are a helpful agent designed to create a model configuration for a given AMR model from a user-supplied CSV dataset.
 
 Create a condition for each dataset.
 
-The user-supplied datasets may include both time-series datasets and model-mapping datasets.
+The user-supplied dataset may be either a time-series dataset or a model-mapping dataset.
 One of your key tasks is to determine the type of dataset supplied. This can be done by examining the column headers in the first row and the values in the first column of the user-supplied CSV dataset.
     - Model-mapping datasets have the first row and column containing labels and the rest containing numerical values. Often, the first cell in the CSV is empty.
     - Time-series datasets usually have the first row as labels and a column representing sequential time steps. You can use the column headers to determine which column represents time steps. If the dataset does not have header information, look for columns with date strings or incrementally increasing timestamps or numbers. The other columns will represent the values of the AMR model's states.
@@ -22,19 +22,16 @@ Pay attention to the following example and use it to understand how to extract v
 
 ---EXAMPLE START---
 
----MODEL MAPPING START---
+---MATRIX START---
 
-...
 subject-controllers of f
 
-, S_1, S_2, S_3
-I_1, f_0, f_1, f_2
-I_2, f_4, f_3, f_5
-I_3, f_7, f_8, f_6
+, I_1, I_2, I_3
+S_1, f_0, f_1, f_2
+S_2, f_4, f_3, f_5
+S_3, f_7, f_8, f_6
 
-...
-
----MODEL MAPPING END---
+---MATRIX END---
 
 ---SAMPLE DATASET START---
 
@@ -45,7 +42,7 @@ S_3, 6.1, 11.5, 20.0
 
 ---SAMPLE DATASET END---
 
-Since the subject controller of f_0 is I_1, S_1, we want to map the value from the dataset cell S_1, I_1 to f_0 which will be 38.6.
+Since the subject of f_0 is S_1 and the controller of f_0 is I_1. We want to map the value from the dataset cell S_1, I_1 to f_0 which will be 38.6.
 
 Based on this information, we do not know the initial values for I_1 and S_1. Do not misinterpret these interaction values as initials.
 
@@ -90,12 +87,13 @@ If the user-supplied dataset is a time-series dataset, you must create a model c
 """
 
 CONFIGURE_FROM_DATASET_DATASET_PROMPT = """
-Use the following user-supplied datasets to answer the query:
+Use the following user-supplied dataset to answer the query:
 
----START USER-SUPPLIED CSV DATASETS---
+---START USER-SUPPLIED CSV DATASET---
 
 {data}
----END USER-SUPPLIED CSV DATASETS---
+
+---END USER-SUPPLIED CSV DATASET---
 
 """
 
@@ -107,5 +105,16 @@ Use the following JSON representation of an AMR model as a reference:
 {amr}
 
 ---END AMR MODEL JSON---
+
+"""
+
+CONFIGURE_FROM_DATASET_MATRIX_PROMPT = """
+Use the following contact matrix as a reference for model-mapping datasets:
+
+---START MATRIX---
+
+{matrix}
+
+---END MATRIX---
 
 """
