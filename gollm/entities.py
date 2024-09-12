@@ -17,7 +17,7 @@ class ConfigureModelDataset(BaseModel):
 
 class ModelCardModel(BaseModel):
     amr: str  # expects AMR in a stringified JSON object
-    research_paper: str
+    research_paper: str = None
 
 
 class ModelCompareModel(BaseModel):
