@@ -12,7 +12,9 @@ setup(
         "tiktoken",
         "jsonschema"
     ],
-	package_data={"gollm.openai.prompts": ["*.json"]},
+	package_data={
+        "gollm.openai.schemas": ["*.json"]
+    },
 	include_package_data=True,
     python_requires=">=3.11",
 )

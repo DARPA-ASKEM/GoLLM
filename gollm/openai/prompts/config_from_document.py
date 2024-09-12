@@ -1,5 +1,6 @@
 CONFIGURE_FROM_DOCUMENT_PROMPT = """
-You are a helpful agent designed to find multiple model configurations for a given AMR model of various conditions described in a research paper.
+You are a helpful agent designed to find multiple model configurations for a given AMR model of various conditions described in a research paper and the initials and parameters that make up those conditions.
+For context, initials represent the initial state of the system through the initial distribution of tokens across the places, known as the initial marking. Each place corresponds to a variable or state in the system, such as a species concentration in a reaction, and the number of tokens reflects the initial conditions of the ODEs. Parameters define the system's rules and rates of evolution, including transition rates (analogous to reaction rates in ODEs) that determine how quickly tokens move between places. These parameters also include stoichiometric relationships, represented by the weights of arcs connecting places and transitions, dictating how many tokens are consumed or produced when a transition occurs.
 
 Use the following AMR model JSON file as a reference:
 

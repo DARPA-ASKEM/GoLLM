@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from fastapi import FastAPI, HTTPException
 import json
-from gollm.openai.tool_utils import model_config_from_document, amodel_card_chain
+from gollm.openai.tool_utils import model_config_from_document, model_card_chain
 from gollm.entities import ConfigureModelDocument, ModelCardModel
 
 app = FastAPI()
@@ -35,8 +35,10 @@ async def configure_model_from_document(input_model: ConfigureModelDocument):
 @app.post("/model_card")
 async def model_card(input_model: ModelCardModel):
     try:
+        amr = input_model.amr
         research_paper = input_model.research_paper
-        response = await amodel_card_chain(
+        response = await model_card_chain(
+            amr=amr,
             research_paper=research_paper
         )  # Use await here
         response = {"response": response}

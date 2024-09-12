@@ -19,16 +19,16 @@ from gollm.openai.prompts.config_from_dataset import (
     CONFIGURE_FROM_DATASET_DATASET_PROMPT,
     CONFIGURE_FROM_DATASET_MAPPING_PROMPT,
     CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT,
-    CONFIGURE_FROM_DATASET_AMR_PROMPT
+    CONFIGURE_FROM_DATASET_AMR_PROMPT,
+    CONFIGURE_FROM_DATASET_MATRIX_PROMPT
 )
 from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
-from gollm.openai.prompts.model_card import MODEL_CARD_TEMPLATE, INSTRUCTIONS
+from gollm.openai.prompts.model_card import INSTRUCTIONS
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
 from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PROMPT
-from gollm.openai.react import OpenAIAgent, AgentExecutor, ReActManager
-from gollm.openai.toolsets import DatasetConfig
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def escape_curly_braces(text: str):
     """
@@ -42,7 +42,7 @@ def model_config_from_document(research_paper: str, amr: str) -> dict:
     research_paper = normalize_greek_alphabet(research_paper)
 
     print("Uploading and validating model configuration schema...")
-    config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'configuration.json')
     with open(config_path, 'r') as config_file:
         response_schema = json.load(config_file)
     validate_schema(response_schema)
@@ -83,40 +83,11 @@ def model_config_from_document(research_paper: str, amr: str) -> dict:
     return model_config_adapter(output_json)
 
 
-def amr_enrichment_chain(amr: str, research_paper:str) -> dict:
+def amr_enrichment_chain(amr: str, research_paper: str) -> dict:
     amr_param_states = parse_param_initials(amr)
     prompt = ENRICH_PROMPT.format(
-		param_initial_dict=amr_param_states,
-		paper_text=escape_curly_braces(research_paper)
-	)
-    client = OpenAI()
-    output = client.chat.completions.create(
-		model="gpt-4o-2024-05-13",
-		max_tokens=4000,
-		top_p=1,
-		frequency_penalty=0,
-		presence_penalty=0,
-		seed=123,
-		temperature=0,
-		response_format={"type": "json_object"},
-		messages=[
-			{"role": "user", "content": prompt},
-		],
-	)
-    return postprocess_oai_json(output.choices[0].message.content)
-
-
-def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
-    print("Creating model card...")
-    assert research_paper or amr, "Either research_paper or amr must be provided."
-    if not research_paper:
-        research_paper = "NO RESEARCH PAPER PROVIDED"
-    if not amr:
-        amr = "NO MODEL FILE PROVIDED"
-    prompt = INSTRUCTIONS.format(
-        research_paper=escape_curly_braces(research_paper),
-        amr=escape_curly_braces(amr),
-        model_card_template=MODEL_CARD_TEMPLATE,
+        param_initial_dict=amr_param_states,
+        paper_text=escape_curly_braces(research_paper)
     )
     client = OpenAI()
     output = client.chat.completions.create(
@@ -125,16 +96,58 @@ def model_card_chain(research_paper: str = None, amr: str = None) -> dict:
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-		temperature=0,
         seed=123,
+        temperature=0,
+        response_format={"type": "json_object"},
         messages=[
             {"role": "user", "content": prompt},
         ],
     )
-    model_card = postprocess_oai_json(output.choices[0].message.content)
-    if model_card is None:
-        return json.loads(MODEL_CARD_TEMPLATE)
-    return model_card
+    return postprocess_oai_json(output.choices[0].message.content)
+
+
+def model_card_chain(amr: str = None, research_paper: str = None) -> dict:
+    print("Creating model card...")
+    assert amr, "An AMR model must be provided."
+    if not research_paper:
+        research_paper = "NO RESEARCH PAPER PROVIDED"
+
+    print("Uploading and validating model card schema...")
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'model_card.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
+    validate_schema(response_schema)
+
+    prompt = INSTRUCTIONS.format(
+        research_paper=escape_curly_braces(research_paper),
+        amr=escape_curly_braces(amr)
+    )
+
+    client = OpenAI()
+    output = client.chat.completions.create(
+        model="gpt-4o-2024-08-06",
+        temperature=0,
+        frequency_penalty=0,
+        max_tokens=4000,
+        presence_penalty=0,
+        seed=123,
+        top_p=1,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "model_card",
+                "schema": response_schema
+            }
+        },
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
+    )
+
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
+    output_json = json.loads(output.choices[0].message.content)
+
+    return output_json
 
 
 def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> str:
@@ -150,7 +163,7 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-		temperature=0,
+        temperature=0,
         seed=123,
         max_tokens=1024,
         messages=[
@@ -158,6 +171,7 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
         ],
     )
     return output.choices[0].message.content
+
 
 def generate_response(instruction: str, response_format: ResponseFormat | None = None) -> str:
     prompt = GENERAL_INSTRUCTION_PROMPT.format(instruction=instruction)
@@ -167,7 +181,7 @@ def generate_response(instruction: str, response_format: ResponseFormat | None =
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-		temperature=0,
+        temperature=0,
         seed=123,
         max_tokens=2048,
         response_format=response_format,
@@ -176,36 +190,6 @@ def generate_response(instruction: str, response_format: ResponseFormat | None =
         ],
     )
     return output.choices[0].message.content
-
-
-async def amodel_card_chain(research_paper: str):
-    """Async, meant to be run via API for batch jobs run offline."""
-    print("Reading model card from research paper: {}".format(research_paper[:100]))
-    research_paper = remove_references(research_paper)
-    prompt = INSTRUCTIONS.format(
-        research_paper=escape_curly_braces(research_paper),
-        model_card_template=MODEL_CARD_TEMPLATE,
-    )
-
-    client = AsyncOpenAI()
-    messages = [{"role": "user", "content": prompt}]
-    functions = None
-    response = await client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
-        messages=messages,
-        tools=functions,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-		temperature=0,
-        seed=123,
-        max_tokens=1024,
-        tool_choice=None,
-    )
-    model_card = postprocess_oai_json(response.choices[0].message.content)
-    if model_card is None:
-        return json.loads(MODEL_CARD_TEMPLATE)
-    return model_card
 
 
 def embedding_chain(text: str) -> List:
@@ -220,13 +204,18 @@ def model_config_from_dataset(amr: str, dataset: List[str]) -> str:
     dataset_text = os.linesep.join(dataset)
 
     print("Uploading and validating model configuration schema...")
-    config_path = os.path.join(SCRIPT_DIR, 'prompts', 'configuration.json')
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'configuration.json')
     with open(config_path, 'r') as config_file:
         response_schema = json.load(config_file)
     validate_schema(response_schema)
 
     print("Building prompt to extract model configurations from a dataset...")
-    prompt = CONFIGURE_FROM_DATASET_PROMPT + CONFIGURE_FROM_DATASET_MAPPING_PROMPT + CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT + CONFIGURE_FROM_DATASET_AMR_PROMPT.format(amr=amr) + CONFIGURE_FROM_DATASET_DATASET_PROMPT.format(data=dataset_text) + "Answer:"
+    prompt = (CONFIGURE_FROM_DATASET_PROMPT
+              + CONFIGURE_FROM_DATASET_MAPPING_PROMPT
+              + CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT
+              + CONFIGURE_FROM_DATASET_AMR_PROMPT.format(amr=amr)
+              + CONFIGURE_FROM_DATASET_DATASET_PROMPT.format(data=dataset_text)
+              + "Answer:")
 
     print("Sending request to OpenAI API...")
     client = OpenAI()
@@ -273,7 +262,7 @@ def compare_models(amrs: List[str]) -> str:
         frequency_penalty=0,
         presence_penalty=0,
         seed=123,
-		temperature=0,
+        temperature=0,
         max_tokens=2048,
         messages=[
             {"role": "user", "content": prompt},

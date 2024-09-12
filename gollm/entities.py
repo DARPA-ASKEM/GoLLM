@@ -11,10 +11,12 @@ class ConfigureModelDocument(BaseModel):
 
 class ConfigureModelDataset(BaseModel):
     dataset: List[str]
+    matrix: str
     amr: str  # expects AMR in a stringified JSON object
 
 
 class ModelCardModel(BaseModel):
+    amr: str  # expects AMR in a stringified JSON object
     research_paper: str
 
 
