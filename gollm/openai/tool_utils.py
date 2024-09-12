@@ -29,6 +29,7 @@ from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PR
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 def escape_curly_braces(text: str):
     """
     Escapes curly braces in a string.
@@ -82,26 +83,26 @@ def model_config_from_document(research_paper: str, amr: str) -> dict:
     return model_config_adapter(output_json)
 
 
-def amr_enrichment_chain(amr: str, research_paper:str) -> dict:
+def amr_enrichment_chain(amr: str, research_paper: str) -> dict:
     amr_param_states = parse_param_initials(amr)
     prompt = ENRICH_PROMPT.format(
-		param_initial_dict=amr_param_states,
-		paper_text=escape_curly_braces(research_paper)
-	)
+        param_initial_dict=amr_param_states,
+        paper_text=escape_curly_braces(research_paper)
+    )
     client = OpenAI()
     output = client.chat.completions.create(
-		model="gpt-4o-2024-05-13",
-		max_tokens=4000,
-		top_p=1,
-		frequency_penalty=0,
-		presence_penalty=0,
-		seed=123,
-		temperature=0,
-		response_format={"type": "json_object"},
-		messages=[
-			{"role": "user", "content": prompt},
-		],
-	)
+        model="gpt-4o-2024-05-13",
+        max_tokens=4000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        seed=123,
+        temperature=0,
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
+    )
     return postprocess_oai_json(output.choices[0].message.content)
 
 
@@ -125,7 +126,7 @@ def model_card_chain(amr: str = None, research_paper: str = None) -> dict:
     client = OpenAI()
     output = client.chat.completions.create(
         model="gpt-4o-2024-08-06",
-		temperature=0,
+        temperature=0,
         frequency_penalty=0,
         max_tokens=4000,
         presence_penalty=0,
@@ -162,7 +163,7 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-		temperature=0,
+        temperature=0,
         seed=123,
         max_tokens=1024,
         messages=[
@@ -180,7 +181,7 @@ def generate_response(instruction: str, response_format: ResponseFormat | None =
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-		temperature=0,
+        temperature=0,
         seed=123,
         max_tokens=2048,
         response_format=response_format,
@@ -261,7 +262,7 @@ def compare_models(amrs: List[str]) -> str:
         frequency_penalty=0,
         presence_penalty=0,
         seed=123,
-		temperature=0,
+        temperature=0,
         max_tokens=2048,
         messages=[
             {"role": "user", "content": prompt},

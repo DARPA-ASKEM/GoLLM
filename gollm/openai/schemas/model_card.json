@@ -2,11 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "modelSummary": {
-      "type": "string",
-      "description": "A brief description of the system or process."
+    "summary": {
+      "type": "object",
+      "properties": {
+        "modelSummary": {
+          "type": "string",
+          "description": "A brief description of the system or process."
+        }
+      },
+      "required": [
+        "modelSummary"
+      ],
+      "additionalProperties": false
     },
-    "modelDetails": {
+    "details": {
       "type": "object",
       "properties": {
         "modelDescription": {
@@ -48,16 +57,43 @@
       "additionalProperties": false
     },
     "biasRisksLimitations": {
-      "type": "string",
-      "description": "Describe sources of bias and risk based on the research paper"
+      "type": "object",
+      "properties": {
+        "modelBiasRisksLimitations": {
+          "type": "string",
+          "description": "Describe sources of bias and risk based on the research paper"
+        }
+      },
+      "required": [
+        "modelBiasRisksLimitations"
+      ],
+      "additionalProperties": false
     },
-    "testingDataFactorsMetrics": {
-      "type": "string",
-      "description": "Describe how the model was validated, e.g., through simulation, comparison with real-world data, etc."
+    "testing": {
+      "type": "object",
+      "properties": {
+        "testingDataFactorsMetrics": {
+          "type": "string",
+          "description": "Describe how the model was validated, e.g., through simulation, comparison with real-world data, etc."
+        }
+      },
+      "required": [
+        "testingDataFactorsMetrics"
+      ],
+      "additionalProperties": false
     },
-    "modelSpecs": {
-      "type": "string",
-      "description": "Details about the model's complexity, such as the number of places, transitions, parameter count, and arcs."
+    "specs": {
+      "type": "object",
+      "properties": {
+        "modelSpecs": {
+          "type": "string",
+          "description": "Details about the model's complexity, such as the number of places, transitions, parameter count, and arcs."
+        }
+      },
+      "required": [
+        "modelSpecs"
+      ],
+      "additionalProperties": false
     },
     "glossary": {
       "type": "array",
@@ -65,13 +101,13 @@
         "type": "string"
       }
     },
-    "modelCardAuthors": {
+    "authors": {
       "type": "array",
       "items": {
         "type": "string"
       }
     },
-    "howToGetStartedWithTheModel": {
+    "gettingStarted": {
       "type": "object",
       "properties": {
         "examples": {
@@ -86,7 +122,7 @@
       ],
       "additionalProperties": false
     },
-    "citation": {
+    "citations": {
       "type": "object",
       "properties": {
         "references": {
@@ -165,16 +201,16 @@
     }
   },
   "required": [
-    "modelSummary",
-    "modelDetails",
+    "summary",
+    "details",
     "uses",
     "biasRisksLimitations",
-    "testingDataFactorsMetrics",
-    "modelSpecs",
+    "testing",
+    "specs",
     "glossary",
-    "modelCardAuthors",
-    "howToGetStartedWithTheModel",
-    "citation",
+    "authors",
+    "gettingStarted",
+    "citations",
     "moreInformation",
     "structuralInformation"
   ],

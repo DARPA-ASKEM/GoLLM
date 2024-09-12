@@ -35,8 +35,10 @@ async def configure_model_from_document(input_model: ConfigureModelDocument):
 @app.post("/model_card")
 async def model_card(input_model: ModelCardModel):
     try:
+        amr = input_model.amr
         research_paper = input_model.research_paper
         response = await model_card_chain(
+            amr=amr,
             research_paper=research_paper
         )  # Use await here
         response = {"response": response}
