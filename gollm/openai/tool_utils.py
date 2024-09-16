@@ -106,7 +106,7 @@ def amr_enrichment_chain(amr: str, research_paper: str) -> dict:
     return postprocess_oai_json(output.choices[0].message.content)
 
 
-def model_card_chain(amr: str = None, research_paper: str = None) -> dict:
+def model_card_chain(amr: str, research_paper: str = None) -> dict:
     print("Creating model card...")
     assert amr, "An AMR model must be provided."
     if not research_paper:
@@ -199,7 +199,7 @@ def embedding_chain(text: str) -> List:
     return output.data[0].embedding
 
 
-def model_config_from_dataset(amr: str, dataset: List[str]) -> str:
+def model_config_from_dataset(amr: str, dataset: List[str], matrix: str) -> str:
     print("Extracting datasets...")
     dataset_text = os.linesep.join(dataset)
 
@@ -211,11 +211,15 @@ def model_config_from_dataset(amr: str, dataset: List[str]) -> str:
 
     print("Building prompt to extract model configurations from a dataset...")
     prompt = (CONFIGURE_FROM_DATASET_PROMPT
-              + CONFIGURE_FROM_DATASET_MAPPING_PROMPT
-              + CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT
-              + CONFIGURE_FROM_DATASET_AMR_PROMPT.format(amr=amr)
-              + CONFIGURE_FROM_DATASET_DATASET_PROMPT.format(data=dataset_text)
-              + "Answer:")
+        + CONFIGURE_FROM_DATASET_MAPPING_PROMPT
+        + CONFIGURE_FROM_DATASET_TIMESERIES_PROMPT
+        + CONFIGURE_FROM_DATASET_AMR_PROMPT.format(amr=amr)
+        + CONFIGURE_FROM_DATASET_DATASET_PROMPT.format(data=dataset_text))
+
+    if matrix:
+        prompt += CONFIGURE_FROM_DATASET_MATRIX_PROMPT.format(matrix=matrix)
+
+    prompt += "Answer:"
 
     print("Sending request to OpenAI API...")
     client = OpenAI()
