@@ -11,8 +11,8 @@ class ConfigureModelDocument(BaseModel):
 
 class ConfigureModelDataset(BaseModel):
     dataset: List[str]
-    matrix: str
     amr: str  # expects AMR in a stringified JSON object
+    matrix: str = None
 
 
 class ModelCardModel(BaseModel):
