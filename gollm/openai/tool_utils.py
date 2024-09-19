@@ -26,6 +26,7 @@ from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
 from gollm.openai.prompts.model_card import INSTRUCTIONS
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
 from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PROMPT
+from gollm.openai.prompts.interventions_from_document import INTERVENTIONS_FROM_DOCUMENT_PROMPT
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -35,6 +36,52 @@ def escape_curly_braces(text: str):
     Escapes curly braces in a string.
     """
     return text.replace("{", "{{").replace("}", "}}")
+
+
+def interventions_from_document(research_paper: str, amr: str) -> dict:
+    print("Extracting and formatting research paper...")
+    research_paper = normalize_greek_alphabet(research_paper)
+
+    print("Uploading and validating intervention policy schema...")
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'intervention_policy.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
+    validate_schema(response_schema)
+
+    print("Building prompt to extract model configurations from a reasearch paper...")
+    prompt = INTERVENTIONS_FROM_DOCUMENT_PROMPT.format(
+        amr=escape_curly_braces(amr),
+        research_paper=escape_curly_braces(research_paper)
+    )
+
+    print("Sending request to OpenAI API...")
+    client = OpenAI()
+    output = client.chat.completions.create(
+        model="gpt-4o-2024-08-06",
+        frequency_penalty=0,
+        max_tokens=4000,
+        presence_penalty=0,
+        seed=905,
+        temperature=0,
+        top_p=1,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "intervention_policy",
+                "schema": response_schema
+            }
+        },
+        messages=[
+            {"role": "user", "content": prompt},
+        ]
+    )
+
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
+    output_json = json.loads(output.choices[0].message.content)
+
+    print("There are ", len(output_json["interventionPolicies"]), "intervention policies identified from the text.")
+
+    return output_json
 
 
 def model_config_from_document(research_paper: str, amr: str) -> dict:

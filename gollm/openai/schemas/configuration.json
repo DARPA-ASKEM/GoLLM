@@ -3,6 +3,7 @@
   "$defs": {
     "modelConfiguration": {
       "type": "object",
+      "description": "state and parameter configurations for a model",
       "properties": {
         "description": {
           "type": [
