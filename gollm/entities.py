@@ -30,7 +30,7 @@ class ModelCompareModel(BaseModel):
 
 
 class EquationsFromImage(BaseModel):
-    image: bytes  # expects image in a supported format (e.g. PNG, JPEG, BMP)
+    image: bytes  # expects a base64 encoded image
 
 
 class EmbeddingModel(BaseModel):

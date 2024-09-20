@@ -58,7 +58,7 @@ def get_image_format_string(image_format: str, base64_image: str) -> str:
         "webp": f"data:image/webp:base64,",
         "exr": f"data:image/exr:base64,"
     }
-    return format_strings.get(image_format.lower()) + base64_image
+    return format_strings.get(image_format.lower())
 
 
 def equations_from_image(image: bytes) -> dict:
@@ -67,7 +67,7 @@ def equations_from_image(image: bytes) -> dict:
     print("Validating and encoding image...")
     base64_image_str = get_image_format_string(
         imghdr.what(None, h=image),
-        base64.b64encode(image).decode('utf-8')
+        base64.b64decode(image)
     )
 
     print("Uploading and validating equations schema...")
@@ -97,7 +97,7 @@ def equations_from_image(image: bytes) -> dict:
                 "role": "user",
                 "content": [
                     {"type": "text", "text": EQUATIONS_FROM_IMAGE_PROMPT},
-                    {"type": "image_url", "image_url": {"url": base64_image_str}}
+                    {"type": "image_url", "image_url": {"url": f"{base64_image_str}{image.decode('utf-8')}"}}
                 ]
             },
         ],
