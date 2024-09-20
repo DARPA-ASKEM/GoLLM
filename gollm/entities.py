@@ -29,6 +29,10 @@ class ModelCompareModel(BaseModel):
     amrs: List[str]  # expects AMRs to be a stringified JSON object
 
 
+class EquationsFromImage(BaseModel):
+    image: bytes  # expects image in a supported format (e.g. PNG, JPEG, BMP)
+
+
 class EmbeddingModel(BaseModel):
     text: str
     embedding_model: str
