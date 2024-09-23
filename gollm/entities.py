@@ -29,6 +29,10 @@ class ModelCompareModel(BaseModel):
     amrs: List[str]  # expects AMRs to be a stringified JSON object
 
 
+class EquationsFromImage(BaseModel):
+    image: str  # expects a base64 encoded image
+
+
 class EmbeddingModel(BaseModel):
     text: str
     embedding_model: str

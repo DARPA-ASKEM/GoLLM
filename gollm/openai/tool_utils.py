@@ -1,5 +1,7 @@
 import json
 import os
+import base64
+import imghdr
 from openai import OpenAI, AsyncOpenAI
 from openai.types.chat.completion_create_params import ResponseFormat
 from typing import List
@@ -22,20 +24,89 @@ from gollm.openai.prompts.config_from_dataset import (
     CONFIGURE_FROM_DATASET_AMR_PROMPT,
     CONFIGURE_FROM_DATASET_MATRIX_PROMPT
 )
+from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PROMPT
+from gollm.openai.prompts.equations_from_image import EQUATIONS_FROM_IMAGE_PROMPT
 from gollm.openai.prompts.general_instruction import GENERAL_INSTRUCTION_PROMPT
+from gollm.openai.prompts.interventions_from_document import INTERVENTIONS_FROM_DOCUMENT_PROMPT
 from gollm.openai.prompts.model_card import INSTRUCTIONS
 from gollm.openai.prompts.model_meta_compare import MODEL_METADATA_COMPARE_PROMPT
-from gollm.openai.prompts.config_from_document import CONFIGURE_FROM_DOCUMENT_PROMPT
-from gollm.openai.prompts.interventions_from_document import INTERVENTIONS_FROM_DOCUMENT_PROMPT
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def escape_curly_braces(text: str):
-    """
-    Escapes curly braces in a string.
-    """
+    # Escape curly braces
     return text.replace("{", "{{").replace("}", "}}")
+
+
+def get_image_format_string(image_format: str) -> str:
+    if not image_format:
+        raise ValueError("Invalid image format.")
+
+    format_strings = {
+        "rgb": f"data:image/rgb:base64,",
+        "gif": f"data:image/gif:base64,",
+        "pbm": f"data:image/pbm:base64,",
+        "pgm": f"data:image/pgm:base64,",
+        "ppm": f"data:image/ppm:base64,",
+        "tiff": f"Bdata:image/tiff:base64MP,",
+        "rast": f"data:image/rast:base64,",
+        "xbm": f"data:image/xbm:base64,",
+        "jpeg": f"data:image/jpeg:base64,",
+        "bmp": f"data:image/bmp:base64,",
+        "png": f"data:image/png:base64,",
+        "webp": f"data:image/webp:base64,",
+        "exr": f"data:image/exr:base64,"
+    }
+    return format_strings.get(image_format.lower())
+
+
+def equations_from_image(image: str) -> dict:
+    print("Translating equations from image...")
+
+    print("Validating and encoding image...")
+    base64_image_str = get_image_format_string(
+        imghdr.what(None, h=base64.b64decode(image))
+    )
+
+    print("Uploading and validating equations schema...")
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'equations.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
+    validate_schema(response_schema)
+
+    client = OpenAI()
+    output = client.chat.completions.create(
+        model="gpt-4o-mini",
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        temperature=0,
+        seed=234,
+        max_tokens=1024,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "equations",
+                "schema": response_schema
+            }
+        },
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": EQUATIONS_FROM_IMAGE_PROMPT},
+                    {"type": "image_url", "image_url": {"url": f"{base64_image_str}{image}"}}
+                ]
+            },
+        ],
+    )
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
+    output_json = json.loads(output.choices[0].message.content)
+
+    print("There are", len(output_json['equations']), "equations identified from the image.")
+
+    return output_json
 
 
 def interventions_from_document(research_paper: str, amr: str) -> dict:
@@ -138,7 +209,7 @@ def amr_enrichment_chain(amr: str, research_paper: str) -> dict:
     )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
+        model="gpt-4o-2024-08-06",
         max_tokens=4000,
         top_p=1,
         frequency_penalty=0,
@@ -206,7 +277,7 @@ def condense_chain(query: str, chunks: List[str], max_tokens: int = 16385) -> st
         )
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
+        model="gpt-4o-2024-08-06",
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
@@ -224,7 +295,7 @@ def generate_response(instruction: str, response_format: ResponseFormat | None =
     prompt = GENERAL_INSTRUCTION_PROMPT.format(instruction=instruction)
     client = OpenAI()
     output = client.chat.completions.create(
-        model="gpt-4o-2024-05-13",
+        model="gpt-4o-2024-08-06",
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
