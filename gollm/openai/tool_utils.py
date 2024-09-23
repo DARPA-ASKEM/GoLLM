@@ -61,7 +61,7 @@ def get_image_format_string(image_format: str) -> str:
     return format_strings.get(image_format.lower())
 
 
-def equations_from_image(image: bytes) -> dict:
+def equations_from_image(image: str) -> dict:
     print("Translating equations from image...")
 
     print("Validating and encoding image...")
