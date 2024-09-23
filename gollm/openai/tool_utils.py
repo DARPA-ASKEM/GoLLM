@@ -39,7 +39,7 @@ def escape_curly_braces(text: str):
     return text.replace("{", "{{").replace("}", "}}")
 
 
-def get_image_format_string(image_format: str, base64_image: str) -> str:
+def get_image_format_string(image_format: str) -> str:
     if not image_format:
         raise ValueError("Invalid image format.")
 
@@ -66,8 +66,7 @@ def equations_from_image(image: bytes) -> dict:
 
     print("Validating and encoding image...")
     base64_image_str = get_image_format_string(
-        imghdr.what(None, h=image),
-        base64.b64decode(image)
+        imghdr.what(None, h=base64.b64decode(image))
     )
 
     print("Uploading and validating equations schema...")
@@ -97,7 +96,7 @@ def equations_from_image(image: bytes) -> dict:
                 "role": "user",
                 "content": [
                     {"type": "text", "text": EQUATIONS_FROM_IMAGE_PROMPT},
-                    {"type": "image_url", "image_url": {"url": f"{base64_image_str}{image.decode('utf-8')}"}}
+                    {"type": "image_url", "image_url": {"url": f"{base64_image_str}{image}"}}
                 ]
             },
         ],
