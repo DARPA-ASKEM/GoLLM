@@ -373,7 +373,7 @@ def compare_models(amrs: List[str]) -> str:
     print("Comparing models...")
 
     print("Building prompt to compare models...")
-    joined_escaped_amrs = "\n------\n".join([escape_curly_braces(amr) for amr in amrs])
+    joined_escaped_amrs = "\n\n------\n\n".join([escape_curly_braces(amr) for amr in amrs])
     prompt = MODEL_METADATA_COMPARE_PROMPT.format(
         amrs=joined_escaped_amrs
     )
