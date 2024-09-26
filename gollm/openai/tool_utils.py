@@ -372,10 +372,17 @@ def model_config_from_dataset(amr: str, dataset: List[str], matrix: str) -> str:
 def compare_models(amrs: List[str]) -> str:
     print("Comparing models...")
 
-    joined_escaped_amrs = "\n------\n".join([escape_curly_braces(amr) for amr in amrs])
+    print("Building prompt to compare models...")
+    joined_escaped_amrs = "\n\n------\n\n".join([escape_curly_braces(amr) for amr in amrs])
     prompt = MODEL_METADATA_COMPARE_PROMPT.format(
         amrs=joined_escaped_amrs
     )
+
+    print("Uploading and validating compare models schema...")
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'compare_models.json')
+    with open(config_path, 'r') as config_file:
+        response_schema = json.load(config_file)
+    validate_schema(response_schema)
 
     client = OpenAI()
     output = client.chat.completions.create(
@@ -386,8 +393,19 @@ def compare_models(amrs: List[str]) -> str:
         seed=123,
         temperature=0,
         max_tokens=2048,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "compare_models",
+                "schema": response_schema
+            }
+        },
         messages=[
             {"role": "user", "content": prompt},
         ]
     )
-    return output.choices[0].message.content
+
+    print("Received response from OpenAI API. Formatting response to work with HMI...")
+    output_json = json.loads(output.choices[0].message.content)
+
+    return output_json
