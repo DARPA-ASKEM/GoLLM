@@ -379,7 +379,7 @@ def compare_models(amrs: List[str]) -> str:
     )
 
     print("Uploading and validating compare models schema...")
-    config_path = os.path.join(SCRIPT_DIR, 'GoLLM/gollm/openai/schemas', 'compare_models.json')
+    config_path = os.path.join(SCRIPT_DIR, 'schemas', 'compare_models.json')
     with open(config_path, 'r') as config_file:
         response_schema = json.load(config_file)
     validate_schema(response_schema)
